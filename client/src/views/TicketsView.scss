@@ -1,0 +1,61 @@
+@import '../variables';
+
+.ticket {
+}
+
+.ticket-poster {
+    height: 350px;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.ticket-dash {
+    height: 1px;
+    background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='black' stroke-width='2' stroke-dasharray='6%2c 14' stroke-dashoffset='2' stroke-linecap='square'/%3e%3c/svg%3e");
+
+    &:before,
+    &:after {
+        content: '';
+        position: absolute;
+        width: 40px;
+        height: 40px;
+        background-color: $bg-color;
+        border-radius: 100%;
+        bottom: -20px;
+    }
+
+    &:before {
+        left: -21px;
+    }
+
+    &:after {
+        right: -21px;
+    }
+}
+
+.carousel-indicators {
+    [data-bs-target] {
+        height: 8px;
+        border: none;
+        border-radius: 12px;
+        opacity: 1;
+        transition: width ease-in 0.15s, background-color ease 0.15s;
+    }
+
+    button {
+        &.active {
+            width: 50px;
+            background-color: gold;
+        }
+    }
+}
+
+.runtime-label {
+    font-size: 0.7rem;
+}
+
+.seats-label {
+    font-size: 0.8rem;
+    border-style: solid;
+}

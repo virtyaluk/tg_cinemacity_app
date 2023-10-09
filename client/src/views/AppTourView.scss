@@ -1,0 +1,38 @@
+.each-slide-effect {
+    background-repeat: no-repeat;
+    background-position: bottom;
+
+    & > div {
+        background-repeat: no-repeat;
+        background-position: bottom;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-size: cover;
+        height: 350px;
+    }
+}
+
+.indicator {
+    margin: 0 2px;
+
+    .dot {
+        width: 8px;
+        height: 8px;
+        border-color: gray;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 50%;
+        background-color: transparent;
+        transition: width 0.15s ease-in, background-color 0.15s ease-in, border-color 0.15s ease-in;
+    }
+
+    &.active {
+        .dot {
+            width: 24px;
+            border-radius: 4px;
+            border-color: #5cb85c;
+            background-color: #5cb85c;
+        }
+    }
+}

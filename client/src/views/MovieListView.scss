@@ -1,0 +1,37 @@
+.category-list {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    & > div {
+        min-width: max-content;
+    }
+
+    .btn {
+        background-color: #877BFB;
+        border: none;
+        outline: none;
+        border-radius: 800px;
+        padding: calc(0.5 * var(--bs-btn-padding-y)) var(--bs-btn-padding-x);
+        float: left;
+
+        &:not(:last-child) {
+            margin-right: 0.5rem;
+        }
+    }
+}
+
+.category-list::-webkit-scrollbar {
+    display: none;
+}
+
+.row > * {
+    &:nth-child(odd) {
+        padding-right: calc(var(--bs-gutter-x) * .25);
+    }
+
+    &:nth-child(even) {
+        padding-left: calc(var(--bs-gutter-x) * .25);
+    }
+}

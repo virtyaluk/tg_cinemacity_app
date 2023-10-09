@@ -1,0 +1,109 @@
+$accent-color: #FEB43A;
+
+.screen-block svg {
+    fill: $accent-color;
+}
+
+.btn-check {
+    width: 0;
+    height: 0;
+    outline: none !important;
+    border: none !important;
+}
+
+label.btn {
+    outline: none !important;
+    border: none !important;
+}
+
+.seat-row {
+    .btn {
+        width: 32px;
+        height: 32px;
+        outline: none !important;
+        border: none !important;
+
+        path {
+            stroke: gray;
+        }
+    }
+
+    input.btn-check {
+        &:checked + label.btn {
+            path {
+                stroke: $accent-color !important;
+            }
+        }
+
+        &.disabled + label.btn,
+        &[disabled] + label.btn {
+            opacity: 1;
+
+            path {
+                stroke: lightgrey;
+            }
+        }
+    }
+}
+
+.seat-avail-tick {
+    width: 18px;
+    height: 18px;
+
+    & + span {
+        font-size: 0.9rem;
+    }
+
+    &.seat-tick-avail {
+        background-color: gray;
+    }
+
+    &.seat-tick-sel {
+        background-color: $accent-color;
+    }
+
+    &.seat-tick-res {
+        background-color: lightgrey;
+    }
+}
+
+.aval-times-list,
+.aval-dates-list {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    & > div {
+        min-width: max-content;
+    }
+
+    input.btn-check + label.btn > div {
+        transition: background-color 0.15s ease-in;
+    }
+
+    input.btn-check:checked + label.btn {
+        border: none;
+        outline: none;
+
+        & > div {
+            background-color: $accent-color !important;
+        }
+    }
+
+    .date-item-circle {
+        width: 42px;
+        height: 42px;
+    }
+
+    .date-item > p {
+        font-size: 0.75rem;
+    }
+}
+
+.schedule-note {
+    font-size: 0.75rem;
+    line-height: normal !important;
+}

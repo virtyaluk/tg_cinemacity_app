@@ -1,0 +1,8 @@
+node_modules
+#config
+build
+yarn-error.log*
+.idea
+.snowpack
+# mac
+.DS_Store
