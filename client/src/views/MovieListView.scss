@@ -16,15 +16,10 @@
     }
 
     label.btn {
-        background-color: gray;
-        color: white;
+        background-color: $secondary-color;
 
-        border: none;
         outline: none;
-        border-radius: 800px;
-        padding: calc(0.5 * var(--bs-btn-padding-y)) var(--bs-btn-padding-x);
         float: left;
-
         transition: background-color 0.15s ease-in, color 0.15s ease-in;
 
         &:not(:last-child) {

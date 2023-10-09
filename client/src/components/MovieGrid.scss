@@ -6,4 +6,12 @@
 
 .movie-poster {
     min-height: 250px;
+    transform-origin: 50% 50%;
+    transition: transform 0.15s ease-in;
+}
+
+.movie-cell:hover {
+    .movie-poster {
+        transform: scale(1.1, 1.1);
+    }
 }

@@ -33,7 +33,7 @@ const TicketView = ({ ticket }: TicketViewProps) => {
         date = dt.toLocaleDateString('en-US', { day: 'numeric', month: 'short' });
 
     return (
-        <Container className="ticket bg-white overflow-auto rounded-5 mx-4 my-5 w-auto overflow-x-hidden">
+        <Container className="ticket bg-white overflow-auto rounded-5 mx-4 my-2 w-auto overflow-x-hidden">
             <Row>
                 <Col xs={ 12 } className="p-0">
                     <div className="ticket-poster w-100"
@@ -75,7 +75,7 @@ const TicketView = ({ ticket }: TicketViewProps) => {
 };
 
 const TicketViewPlaceholder = () => (
-    <Container className="ticket bg-white overflow-auto rounded-5 mx-4 my-5 w-auto overflow-x-hidden placeholder-glow">
+    <Container className="ticket bg-white overflow-auto rounded-5 mx-4 my-2 w-auto overflow-x-hidden placeholder-glow">
         <Row>
             <Col xs={ 12 } className="p-0">
                 <div className="ticket-poster w-100 placeholder"></div>

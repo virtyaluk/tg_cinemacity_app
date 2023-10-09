@@ -25,7 +25,9 @@ import appController from './services/AppController';
 import './i18n';
 import './index.scss';
 
-appController.setBackgroundColor('#D0DDE0').setHeaderColor('#D0DDE0');
+appController
+    .setBackgroundColor('#dad7cd')
+    .setHeaderColor('#dad7cd');
 
 const router = createBrowserRouter(createRoutesFromElements(
     <Route element={ <RootView /> } errorElement={ <AppErrorView /> } path="/">

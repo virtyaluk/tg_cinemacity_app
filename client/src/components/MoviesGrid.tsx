@@ -46,8 +46,8 @@ const MovieCell = ({ movie, posterBaseUrl, posterSize }: MovieCellProps): JSX.El
 
     return (
         <>
-            <Link to={ `${ movie.id }` } className='text-decoration-none text-body fs-6'>
-                <div className='rounded overflow-auto position-relative'>
+            <Link to={ `${ movie.id }` } className='movie-cell text-decoration-none text-body fs-6'>
+                <div className='rounded overflow-hidden position-relative'>
                     <img className='movie-poster w-100'
                          src={ movie.poster_path && `${ posterBaseUrl }${ posterSize }${ movie.poster_path }` || '/assets/no_photo.jpg' }
                          alt={ movie.title }/>

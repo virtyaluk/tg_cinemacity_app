@@ -31,10 +31,12 @@ label.btn {
 
         path {
             stroke: gray;
+            transition: stroke 0.15s ease-in;
         }
     }
 
     input.btn-check {
+        &:hover + label.btn,
         &:checked + label.btn {
             path {
                 stroke: $accent-color !important;
@@ -90,6 +92,7 @@ label.btn {
         transition: background-color 0.15s ease-in;
     }
 
+    input.btn-check:hover + label.btn,
     input.btn-check:checked + label.btn {
         border: none;
         outline: none;
@@ -97,6 +100,11 @@ label.btn {
         & > div {
             background-color: $accent-color !important;
         }
+    }
+
+    input.btn-check:disabled + label.btn,
+    input.btn-check[disabled] + label.btn {
+        color: gray;
     }
 
     .date-item-circle {

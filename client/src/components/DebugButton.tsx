@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import appController from '../services/AppController';
 
-const SHOW_DEBUG_SECTION: boolean = true;
+const SHOW_DEBUG_SECTION: boolean = import.meta.env.MODE != 'production';
 
 const debugWindow = window as unknown as Window & { showDebug: () => void; hideDebug: () => void; };
 
@@ -56,16 +56,18 @@ export default function DebugButton(): JSX.Element {
     return (
         <>
             {
-                showDebugSection && <div className="container bg-gradient">
+                showDebugSection &&
+                <div className="container bg-gradient border-1 border-black" style={ { borderStyle: 'solid' } }>
                     <div className="row">
-                        <div className={ 'col-3 pb-3' + (!isBackBtnVisible && ' d-none' || '') }>
+                        <div className={ 'col-3 py-1' + (!isBackBtnVisible && ' d-none' || '') }>
                             <div className="d-grid gap-2">
-                                <button onClick={ backBtnClickHandler } type="button" className="btn btn-primary btn-lg">
+                                <button onClick={ backBtnClickHandler } type="button"
+                                        className="btn btn-primary btn-lg">
                                     <FontAwesomeIcon icon={ faArrowLeft } size="xs" />
                                 </button>
                             </div>
                         </div>
-                        <div className={ 'col-9 pb-3' + (!isMainBtnVisible && ' d-none' || '') }>
+                        <div className={ 'col-9 py-1' + (!isMainBtnVisible && ' d-none' || '') }>
                             <div className="d-grid gap-2">
                                 <button onClick={ mainBtnClickHandler }
                                         disabled={ isMainBtnDisabled }

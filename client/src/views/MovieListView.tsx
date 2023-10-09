@@ -168,11 +168,13 @@ export default function MovieListView(): JSX.Element {
                                     movieConfig.genres.filter(({ id }) => !allCurrentGenres.size || allCurrentGenres.has(id)).map(({
                                                                                                                                        id,
                                                                                                                                        name,
-                                                                                                                                   }: MovieGenre) =>
-                                        <ToggleButton id={ name } value={ id } type={ 'checkbox' }
+                                                                                                                                   }: MovieGenre, idx) =>
+                                        <ToggleButton id={ name.toLowerCase().replace(' ', '_') } value={ id }
+                                                      type={ 'checkbox' } key={ idx }
                                                       onClick={ () => toggleGenre(id) }
+                                                      className="rounded-2 px-2 py-1 text-black border-0"
                                                       checked={ selectedGenres.has(id) }>
-                                            <div>{ t(name) }</div>
+                                            <div>{ t(`movies.categories.${ id }`) }</div>
                                         </ToggleButton>,
                                     )
                                 }
