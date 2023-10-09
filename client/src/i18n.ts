@@ -8,19 +8,23 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import enLocale from './locales/en';
+import uaLocale from './locales/ua';
 
 const resources = {
     en: {
-        translation: enLocale
-    }
+        translation: enLocale,
+    },
+    ua: {
+        translation: uaLocale,
+    },
 };
 
 i18n
     .use(initReactI18next)
-    .use(LanguageDetector)
+    // .use(LanguageDetector)
     .init({
         resources,
-        fallbackLng: 'en'
+        fallbackLng: 'en',
     });
 
 export default i18n;

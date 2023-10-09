@@ -45,7 +45,7 @@ const en = {
         'main_btn_title': 'Show My Tickets',
         'categories': {
             '28': '💣 Action',
-            '12': '💣 Adventure',
+            '12': '🏝️ Adventure',
             '16': '🧸 Animation',
             '35': '🎭 Comedy',
             '80': '🔫 Crime',
