@@ -29,10 +29,10 @@ export default function AppTourView(): JSX.Element {
     const navigationThroughAppTourHandler = () => {
         switch (curTourSlide) {
             case 0:
-                appController.mainButton?.setText('app_tour.main_btn_title_next');
+                appController.mainButton?.setText(t('app_tour.main_btn_title_next'));
                 break;
             case 1:
-                appController.mainButton?.setText('app_tour.main_btn_title_finish');
+                appController.mainButton?.setText(t('app_tour.main_btn_title_finish'));
                 break;
             case 2:
                 appController.storage.setItem(APP_TOUR_FINISHED_KEY, 'true').then();
@@ -47,7 +47,7 @@ export default function AppTourView(): JSX.Element {
     useEffect(() => {
         appController.mainButton
             ?.show()
-            .setText('app_tour.main_btn_title_start');
+            .setText(t('app_tour.main_btn_title_start'));
 
         return () => {
             appController.mainButton?.hide();

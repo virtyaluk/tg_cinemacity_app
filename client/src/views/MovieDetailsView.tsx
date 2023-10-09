@@ -218,6 +218,7 @@ export default function MovieDetailsView() {
     const [appError, setAppError] = useState<boolean>(false);
     const { movieConfig } = useContext(MovieContext);
     const navigate = useNavigate();
+    const { t } = useTranslation();
     const parent1 = useRef(null);
     const parent2 = useRef(null);
     const parent3 = useRef(null);
@@ -229,8 +230,8 @@ export default function MovieDetailsView() {
 
     useEffect(() => {
         // Load movie details.
-        Promise.all([getMovieDetails(movieId ?? '', 'en', 'en', 0, 0, 0), timeout(10)])
-            .then(([movieDetailsResp]) => {
+        getMovieDetails(movieId ?? '', 'en', 'en', 0, 0, 0)
+            .then(movieDetailsResp => {
                 setMovieDetails(movieDetailsResp);
             })
             .catch(err => {
@@ -250,7 +251,7 @@ export default function MovieDetailsView() {
     }, []);
 
     useEffect(() => {
-        appController.mainButton?.setText('movie_details.main_btn_title');
+        appController.mainButton?.setText(t('movie_details.main_btn_title'));
     }, []);
 
     useEffect(() => {
