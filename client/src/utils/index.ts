@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 export const getPoster = (posters: string[], idx: number): string => {
     const len = posters.length;
 

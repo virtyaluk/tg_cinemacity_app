@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import React, { useEffect, useState } from 'react';
 import { Outlet, useNavigate, ScrollRestoration } from 'react-router-dom';
 import localforage from 'localforage';

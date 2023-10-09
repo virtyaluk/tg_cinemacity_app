@@ -10,7 +10,12 @@
     "typescript": "^4.5.2"
   },
   "scripts": {
-    "start": "concurrently \"yarn --cwd client start\" \"yarn --cwd server start\"",
-    "build": "yarn --cwd client build && yarn --cwd server build"
+    "start:dev": "concurrently \"yarn --cwd client start\" \"yarn --cwd server start\"",
+    "start": "yarn --cwd server start:prod",
+    "build": "yarn --cwd client build && yarn --cwd server build",
+    "heroku-postbuild": "yarn --cwd client install && yarn --cwd server install && yarn run build"
+  },
+  "engines": {
+    "node": "17.x"
   }
 }

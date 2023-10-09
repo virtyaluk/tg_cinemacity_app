@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';

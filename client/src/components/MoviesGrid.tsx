@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import React, { useContext } from 'react';
 import { Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';

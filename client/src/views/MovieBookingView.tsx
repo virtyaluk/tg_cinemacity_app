@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';

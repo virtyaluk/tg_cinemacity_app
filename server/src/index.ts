@@ -1,3 +1,8 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
 import 'dotenv/config';
 import cors from 'cors';
 import express, { json, urlencoded } from 'express';
@@ -21,12 +26,12 @@ if (isProduction) {
 
 const app = express();
 
-app.use(helmet());
-app.use(
-  cors({
-    origin: config.allowedOrigin
-  })
-);
+// app.use(helmet());
+// app.use(
+//   cors({
+//     origin: config.allowedOrigin
+//   })
+// );
 app.use(json());
 app.use(urlencoded({ extended: true }));
 if (isProduction) {

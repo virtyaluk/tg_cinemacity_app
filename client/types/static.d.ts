@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 /* Use this file to declare any custom file extensions for importing */
 /* Use this folder to also add/extend a package d.ts file, if needed. */
 

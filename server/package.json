@@ -31,6 +31,10 @@
     "ts:watch": "tsc -w",
     "node:dev": "cross-env NODE_ENV=development nodemon",
     "start": "concurrently \"yarn ts:watch\" \"yarn node:dev\"",
-    "build": "tsc --build && cross-env NODE_ENV=production node build/index.js"
+    "build": "tsc --build",
+    "start:prod": "cross-env NODE_ENV=production node build/index.js"
+  },
+  "engines": {
+    "node": "17.x"
   }
 }

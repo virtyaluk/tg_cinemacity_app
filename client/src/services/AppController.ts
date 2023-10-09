@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import localforage from 'localforage';
 import { getItem, setItem } from './TgCloudStorage';
 import { Telegram, WebApp, WebApp as WebAppTypes } from '../../../shared';

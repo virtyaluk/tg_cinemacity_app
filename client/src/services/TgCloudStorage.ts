@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import { Telegram, WebApp as WebAppTypes } from '../../../shared';
 
 const telegramWindow = window as unknown as Window & { Telegram: Telegram };

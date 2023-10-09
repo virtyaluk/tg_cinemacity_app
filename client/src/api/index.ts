@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import { SERVER_API_BASE_URL_PROD, SERVER_API_BASE_URL_DEV } from '../config';
 import {
     ConfigResponse,

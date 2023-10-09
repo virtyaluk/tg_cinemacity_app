@@ -1,3 +1,9 @@
+/*
+ * Licensed under the MIT license.
+ * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
+ */
+
+
 import MovieDetailsView from './MovieDetailsView';
 import MovieListView from './MovieListView';
 import RootView from './RootView';
