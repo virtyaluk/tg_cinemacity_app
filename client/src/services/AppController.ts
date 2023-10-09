@@ -14,6 +14,14 @@ type HandlerFunction = () => void;
 const telegramWindow = window as unknown as Window & { Telegram: Telegram };
 const WebApp: WebAppTypes = telegramWindow.Telegram.WebApp;
 
+interface MainBtnParams {
+    color?: string;
+    text?: string;
+    text_color?: string;
+    is_active?: boolean;
+    is_visible?: boolean;
+}
+
 class AppMainButton {
     public clickHandlerFn: Nullable<HandlerFunction> = null;
     private tgMainBtn = WebApp.MainButton;
@@ -21,6 +29,8 @@ class AppMainButton {
     private setTextHandler: Nullable<(text: string) => void> = null;
     private setVisibilityHandler: Nullable<(visible: boolean) => void> = null;
     private setDisabilityHandler: Nullable<(isDisabled: boolean) => void> = null;
+    private setTextColorHandler: Nullable<(color: string) => void> = null;
+    private setColorHandler: Nullable<(color: string) => void> = null;
 
     public constructor() {
         this.tgMainBtn.onClick(() => this.onClickHandler());
@@ -34,7 +44,7 @@ class AppMainButton {
         return this;
     }
 
-    public off = (): AppMainButton => {
+    public off(): AppMainButton {
         this.clickHandlerFn = null;
 
         return this;
@@ -99,18 +109,29 @@ class AppMainButton {
         return this;
     }
 
-    public setParams() {
+    public setParams(params: MainBtnParams): AppMainButton {
+        this.tgMainBtn.setParams(params);
 
+        params.is_visible !== undefined && this.setVisibility(params.is_visible);
+        params.text && this.setText(params.text);
+        params.text_color && this.setTextColorHandler && this.setTextColorHandler(params.text_color);
+        params.color && this.setColorHandler && this.setColorHandler(params.color);
+
+        return this;
     }
 
     public setReactHandlers(
         setTextHandler: (text: string) => void,
         setVisibilityHandler: (visible: boolean) => void,
         setDisabilityHandler: (isDisabled: boolean) => void,
+        setTextColorHandler: (color: string) => void,
+        setColorHandler: (color: string) => void,
     ): AppMainButton {
         this.setTextHandler = setTextHandler;
         this.setVisibilityHandler = setVisibilityHandler;
         this.setDisabilityHandler = setDisabilityHandler;
+        this.setTextColorHandler = setTextColorHandler;
+        this.setColorHandler = setColorHandler;
 
         return this;
     }
@@ -118,6 +139,9 @@ class AppMainButton {
     public removeReactHandlers(): AppMainButton {
         this.setTextHandler = null;
         this.setVisibilityHandler = null;
+        this.setDisabilityHandler = null;
+        this.setTextColorHandler = null;
+        this.setColorHandler = null;
 
         return this;
     }
@@ -128,6 +152,75 @@ class AppMainButton {
         if (this.clickHandlerFn) {
             this.clickHandlerFn();
         }
+    }
+}
+
+class AppBackButton {
+    public clickHandlerFn: Nullable<HandlerFunction> = null;
+    private tgBackBtn = WebApp.BackButton;
+    private setVisibilityHandler: Nullable<(visible: boolean) => void> = null;
+    private isSupported;
+
+    constructor(isSupported: boolean) {
+        this.isSupported = isSupported;
+
+        if (this.isSupported) {
+            this.tgBackBtn.onClick(() => this.onClickHandler());
+        }
+    }
+
+    public on(fn: HandlerFunction): AppBackButton {
+        console.debug('AppBackButton::on');
+
+        this.clickHandlerFn = fn;
+
+        return this;
+    }
+
+    public off(): AppBackButton {
+        this.clickHandlerFn = null;
+
+        return this;
+    };
+
+    public show(): AppBackButton {
+        if (this.isSupported) {
+            this.tgBackBtn.show();
+        }
+
+        this.setVisibilityHandler && this.setVisibilityHandler(true);
+
+        return this;
+    }
+
+    public hide(): AppBackButton {
+        if (this.isSupported) {
+            this.tgBackBtn.hide();
+        }
+
+        this.setVisibilityHandler && this.setVisibilityHandler(false);
+
+        return this;
+    }
+
+    public setReactHandlers(
+        setVisibilityHandler: (visible: boolean) => void,
+    ): AppBackButton {
+        this.setVisibilityHandler = setVisibilityHandler;
+
+        return this;
+    }
+
+    public removeReactHandlers(): AppBackButton {
+        this.setVisibilityHandler = null;
+
+        return this;
+    }
+
+    public onClickHandler() {
+        console.debug('AppBackButton::onClickHandler');
+
+        this.clickHandlerFn && this.clickHandlerFn();
     }
 }
 
@@ -157,13 +250,15 @@ class Storage {
 
 class AppController {
     public mainButton: AppMainButton;
+    public backButton: AppBackButton;
     private tg: WebApp;
     public storage: Storage;
 
     constructor() {
-        this.mainButton = new AppMainButton();
-        this.storage = new Storage();
         this.tg = WebApp;
+        this.mainButton = new AppMainButton();
+        this.backButton = new AppBackButton(this.tg.isVersionAtLeast('6.1'));
+        this.storage = new Storage();
     }
 
     public ready(): AppController {
@@ -184,14 +279,34 @@ class AppController {
         return this;
     }
 
-    public setHeaderColor(color: `#${string}`): AppController {
+    public setHeaderColor(color: `#${ string }`): AppController {
         this.tg.setHeaderColor(color);
 
         return this;
     }
 
-    public setBackgroundColor(color: `#${string}`): AppController {
+    public setBackgroundColor(color: `#${ string }`): AppController {
         this.tg.setBackgroundColor(color);
+
+        return this;
+    }
+
+    public enableClosingConfirmation(): AppController {
+        if (!this.tg.isVersionAtLeast('6.2')) {
+            return this;
+        }
+
+        this.tg.enableClosingConfirmation();
+
+        return this;
+    }
+
+    public disableClosingConfirmation(): AppController {
+        if (!this.tg.isVersionAtLeast('6.2')) {
+            return this;
+        }
+
+        this.tg.disableClosingConfirmation();
 
         return this;
     }

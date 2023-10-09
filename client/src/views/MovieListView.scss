@@ -3,6 +3,7 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
+@import '../variables';
 
 .category-list {
     overflow-x: scroll;
@@ -14,17 +15,37 @@
         min-width: max-content;
     }
 
-    .btn {
-        background-color: #877BFB;
+    label.btn {
+        background-color: gray;
+        color: white;
+
         border: none;
         outline: none;
         border-radius: 800px;
         padding: calc(0.5 * var(--bs-btn-padding-y)) var(--bs-btn-padding-x);
         float: left;
 
+        transition: background-color 0.15s ease-in, color 0.15s ease-in;
+
         &:not(:last-child) {
             margin-right: 0.5rem;
         }
+    }
+
+    input.btn-check:focus + label.btn {
+        background-color: gray !important;
+        color: white !important;
+    }
+
+    input.btn-check:hover + label.btn,
+    input.btn-check:active + label.btn {
+        background-color: $gold-color;
+        color: black;
+    }
+
+    input.btn-check:checked + label.btn {
+        background-color: $gold-color !important;
+        color: black !important;
     }
 }
 

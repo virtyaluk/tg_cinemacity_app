@@ -23,6 +23,9 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 export default function RootView(): JSX.Element {
     const [movieConfig, setMovieConfig] = useState<ConfigResponse>(INIT_MOVIE_CONFIG);
     const navigate = useNavigate();
+    const backNavigationThroughAppHandler = () => {
+        history.back();
+    };
 
     useEffect(() => {
         localforage
@@ -62,6 +65,18 @@ export default function RootView(): JSX.Element {
         appController
             .ready()
             .expand();
+    }, []);
+
+    useEffect(() => {
+        appController.backButton.on(backNavigationThroughAppHandler);
+        appController.mainButton.setParams({
+            color: '#FFB800',
+            text_color: '#000000',
+        });
+
+        return () => {
+            appController.backButton.off();
+        };
     }, []);
 
     return (

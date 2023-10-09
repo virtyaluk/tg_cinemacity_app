@@ -8,7 +8,7 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
-import { Container, Row, Col, Button } from 'react-bootstrap';
+import { Container, Row, Col, ToggleButton } from 'react-bootstrap';
 import autoAnimate from '@formkit/auto-animate';
 import { MovieContext, MovieContextValue } from '../context/MovieContext';
 import appController from '../services/AppController';
@@ -26,7 +26,6 @@ const NUM_PLACEHOLDER_ITEMS_SHOWN: number = 4,
     moviesSortReverseFn = (a: MovieListItem, b: MovieListItem) => Date.parse(a.release_date) - Date.parse(b.release_date);
 
 type MoviesGridPlaceholderProps = {
-    show: boolean;
     size: number;
 }
 
@@ -34,11 +33,11 @@ type TitleLabelProps = {
     count: number;
 }
 
-const MoviesGridPlaceholder = ({ show, size }: MoviesGridPlaceholderProps): JSX.Element => (
+const MoviesGridPlaceholder = ({ size }: MoviesGridPlaceholderProps): JSX.Element => (
     <>
         {
-            show && [...new Array(size)].map((_, idx: number) => <div key={ idx }
-                                                                      className="card-title placeholder-wave col-6 mb-3">
+            [...new Array(size)].map((_, idx: number) => <div key={ idx }
+                                                              className="card-title placeholder-wave col-6 mb-3">
                 <div className="placeholder w-100 rounded" style={ { height: '200px' } }></div>
                 <div className="placeholder w-100 rounded"></div>
             </div>)
@@ -122,13 +121,13 @@ export default function MovieListView(): JSX.Element {
 
     useEffect(() => {
         appController.mainButton
-            ?.enable()
+            .enable()
             .setText(t('My Tickets'))
             .on(navigationThroughMoviesListHandler)
             .setVisibility(tickets.length > 0);
 
         return () => {
-            appController.mainButton?.off().hide();
+            appController.mainButton.off().hide();
         };
     }, [tickets]);
 
@@ -170,15 +169,12 @@ export default function MovieListView(): JSX.Element {
                                                                                                                                        id,
                                                                                                                                        name,
                                                                                                                                    }: MovieGenre) =>
-                                        <Button
-                                            value={ id }
-                                            id={ name }
-                                            tabIndex={ -1 }
-                                            active={ selectedGenres.has(id) }
-                                            key={ id }
-                                            onClick={ () => toggleGenre(id) }
-                                            variant={ 'secondary' }
-                                        >{ t(name) }</Button>)
+                                        <ToggleButton id={ name } value={ id } type={ 'checkbox' }
+                                                      onClick={ () => toggleGenre(id) }
+                                                      checked={ selectedGenres.has(id) }>
+                                            <div>{ t(name) }</div>
+                                        </ToggleButton>,
+                                    )
                                 }
                             </div>
                         </div>
@@ -195,8 +191,11 @@ export default function MovieListView(): JSX.Element {
                 </Row>
 
                 <div className="row my-2 mb-0" ref={ parent1 }>
-                    <MoviesGridPlaceholder show={ !nowPlayingMovies.length } size={ NUM_PLACEHOLDER_ITEMS_SHOWN } />
-                    <MoviesGrid movies={ nowPlayingMovies.slice(0, 26) } genres={ selectedGenres } />
+                    {
+                        nowPlayingMovies.length &&
+                        <MoviesGrid movies={ nowPlayingMovies } genres={ selectedGenres } /> ||
+                        <MoviesGridPlaceholder size={ NUM_PLACEHOLDER_ITEMS_SHOWN } />
+                    }
                 </div>
 
                 <Row>
@@ -209,8 +208,11 @@ export default function MovieListView(): JSX.Element {
                 </Row>
 
                 <div className="row my-2 mb-0" ref={ parent2 }>
-                    <MoviesGridPlaceholder show={ !upcomingMovies.length } size={ NUM_PLACEHOLDER_ITEMS_SHOWN } />
-                    <MoviesGrid movies={ upcomingMovies } genres={ selectedGenres } />
+                    {
+                        upcomingMovies.length &&
+                        <MoviesGrid movies={ upcomingMovies } genres={ selectedGenres } /> ||
+                        <MoviesGridPlaceholder size={ NUM_PLACEHOLDER_ITEMS_SHOWN } />
+                    }
                 </div>
             </Container>
         </section>

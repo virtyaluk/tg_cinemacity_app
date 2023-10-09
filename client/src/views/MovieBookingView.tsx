@@ -95,9 +95,10 @@ const CinemaHallSchemaPreloader = () => (
 interface DatePickerProps {
     selectedDate: number;
     setSelectedDate: (date: number) => void;
+    setSelectedTime: (time: string) => void;
 }
 
-const DatePicker = ({ selectedDate, setSelectedDate }: DatePickerProps) => {
+const DatePicker = ({ selectedDate, setSelectedDate, setSelectedTime }: DatePickerProps) => {
     const [dates, setDates] = useState<Date[]>([]);
 
     useEffect(() => {
@@ -122,7 +123,10 @@ const DatePicker = ({ selectedDate, setSelectedDate }: DatePickerProps) => {
             {
                 dates.map((date, idx) => <ToggleButton id={ 'select_date' + date.getTime() } value={ date.getTime() }
                                                        key={ idx } type="radio"
-                                                       onClick={ () => setSelectedDate(date.getTime()) }
+                                                       onClick={ () => {
+                                                           setSelectedDate(date.getTime());
+                                                           setSelectedTime('');
+                                                       } }
                                                        checked={ selectedDate == date.getTime() }
                                                        variant="" className="m-0 p-0 d-inline-block">
                     <div className="date-item d-inline-block bg-body-secondary rounded-5 text-center me-3">
@@ -173,6 +177,7 @@ const TimePicker = ({ showtime_slots, selectedTime, setSelectedTime, selectedDat
                     value={ `${ hour }_${ minute }` }
                     checked={ selectedTime == `${ hour }_${ minute }` }
                     onClick={ () => setSelectedTime(`${ hour }_${ minute }`) }
+                    disabled={ !selectedDate }
                     type="radio" variant=""
                     className="m-0 p-0">
                     <div
@@ -221,11 +226,17 @@ export default function MovieBookingView() {
                 totalPrice += movieSchedule?.ticket_prices.prices[type] ?? 0;
             });
 
-            appController.mainButton?.setDisability(!selectedDate || !selectedTime).setText(t('booking.main_btn_title', {
-                amount: totalPrice / 100,
-            })).show();
+            appController.mainButton
+                .setDisability(!selectedDate || !selectedTime)
+                .setText(t('booking.main_btn_title', {
+                    amount: totalPrice / 100,
+                }))
+                .show();
+
+            appController.enableClosingConfirmation();
         } else {
-            appController.mainButton?.disable().hide();
+            appController.mainButton.disable().hide();
+            appController.disableClosingConfirmation();
         }
     };
 
@@ -252,10 +263,10 @@ export default function MovieBookingView() {
                 console.error('an error occurred while loading now playing movies', err);
             });
 
-        appController.mainButton?.on(navigationThroughBookingHandler);
+        appController.mainButton.on(navigationThroughBookingHandler);
 
         return () => {
-            appController.mainButton?.off();
+            appController.mainButton.enable().off();
         };
     }, []);
 
@@ -287,6 +298,14 @@ export default function MovieBookingView() {
         parent1.current && autoAnimate(parent1.current);
         parent2.current && autoAnimate(parent2.current);
     }, [parent1, parent2]);
+
+    useEffect(() => {
+        appController.backButton.show();
+
+        return () => {
+            appController.backButton.hide();
+        };
+    }, []);
 
     return (
         <>
@@ -336,7 +355,7 @@ export default function MovieBookingView() {
                     </Col>
                 </Row>
             </Container>
-            <Container className="bg-white pt-3 mt-3 rounded-5">
+            <Container className="bg-white pt-3 mt-3 rounded-top-5">
                 <Row>
                     <Col xs={ 12 } className="text-center">
                         <h6 className="fw-medium">{ t('booking.dat_section_header') }</h6>
@@ -347,7 +366,8 @@ export default function MovieBookingView() {
                     <Col xs={ 12 }>
                         <div className="aval-dates-list overflow-x-scroll overflow-y-hidden pt-2 pb-2 text-center">
                             <div>
-                                <DatePicker setSelectedDate={ setSelectedDate } selectedDate={ selectedDate } />
+                                <DatePicker setSelectedDate={ setSelectedDate } setSelectedTime={ setSelectedTime }
+                                            selectedDate={ selectedDate } />
                             </div>
                         </div>
                     </Col>

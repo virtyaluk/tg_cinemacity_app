@@ -3,7 +3,6 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
@@ -13,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faClockFour } from '@fortawesome/free-solid-svg-icons';
 import Barcode from 'react-barcode';
 import { MovieContext } from '../context/MovieContext';
+import appController from '../services/AppController';
 import { getPoster } from '../utils';
 import { APP_NAME } from '../consts';
 import { Ticket } from '../../../shared';
@@ -118,6 +118,14 @@ export default function TicketsView(): JSX.Element {
     useEffect(() => {
         setTickets(location.state.tickets);
     }, [location]);
+
+    useEffect(() => {
+        appController.backButton.show();
+
+        return () => {
+            appController.backButton.hide();
+        };
+    }, []);
 
     return (
         <>

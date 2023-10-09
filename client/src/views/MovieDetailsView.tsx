@@ -251,7 +251,12 @@ export default function MovieDetailsView() {
     }, []);
 
     useEffect(() => {
-        appController.mainButton?.setText(t('movie_details.main_btn_title'));
+        appController.mainButton.setText(t('movie_details.main_btn_title'));
+        appController.backButton.show();
+
+        return () => {
+            appController.backButton.hide();
+        };
     }, []);
 
     useEffect(() => {
@@ -262,10 +267,10 @@ export default function MovieDetailsView() {
         const daysSinceRelease: number = (Date.now() - Date.parse(movieDetails.release_date)) / 1000 / 60 / 60 / 24,
             isAvailableNow: boolean = daysSinceRelease < 0 && Math.abs(daysSinceRelease) < DAYS_UNTIL_RELEASE_AVAILABLE;
 
-        ((daysSinceRelease >= 0 && daysSinceRelease <= DAYS_IN_CINEMA_SINCE_RELEASE) || isAvailableNow) && appController.mainButton?.on(navigationThroughMovieDetailsHandler).show();
+        ((daysSinceRelease >= 0 && daysSinceRelease <= DAYS_IN_CINEMA_SINCE_RELEASE) || isAvailableNow) && appController.mainButton.on(navigationThroughMovieDetailsHandler).show();
 
         return () => {
-            appController.mainButton?.hide().off();
+            appController.mainButton.hide().off();
         };
     }, [movieDetails]);
 
@@ -296,7 +301,7 @@ export default function MovieDetailsView() {
                     }
                     <Row>
                         <Col xs={ 12 } className="p-0 mt-3">
-                            <div className="movie-date-tag w-100 position-relative rounded-5 rounded-bottom-0"
+                            <div className="movie-date-tag w-100 position-relative bg-white rounded-5 rounded-bottom-0"
                                  ref={ parent3 }>
                                 {
                                     movieDetails && <MovieDateTag movieDetails={ movieDetails } /> ||
@@ -307,7 +312,7 @@ export default function MovieDetailsView() {
                     </Row>
                 </Container>
             </div>
-            <div className={ appError ? 'd-none' : '' } ref={ parent2 }>
+            <div className={ 'bg-white' + (appError ? ' d-none' : '') } ref={ parent2 }>
                 {
                     movieDetails && <MovieInfoSection2 movieDetails={ movieDetails } movieCast={ movieCast }
                                                        imgUrlPrefix={ imgUrlPrefix } /> ||
