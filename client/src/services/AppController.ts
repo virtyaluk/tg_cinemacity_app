@@ -3,15 +3,22 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 import localforage from 'localforage';
 import { getItem, setItem } from './TgCloudStorage';
 import { Telegram, WebApp, WebApp as WebAppTypes } from '../../../shared';
 
 type Nullable<T> = T | null | undefined;
-type HandlerFunction = () => void;
+type InvoiceStatus = 'paid' | 'cancelled' | 'failed' | 'pending';
+
+interface TgApp {
+    mainBtnClickHandler?: Nullable<() => void>;
+    backBtnClickHandler?: Nullable<() => void>;
+}
+
+const DEFAULT_USED_ID: number = 57829451;
 
 const telegramWindow = window as unknown as Window & { Telegram: Telegram };
+const tgAppWindow = window as unknown as Window & { TgApp: TgApp };
 const WebApp: WebAppTypes = telegramWindow.Telegram.WebApp;
 
 interface MainBtnParams {
@@ -23,29 +30,27 @@ interface MainBtnParams {
 }
 
 class AppMainButton {
-    public clickHandlerFn: Nullable<HandlerFunction> = null;
     private tgMainBtn = WebApp.MainButton;
-
-    private setTextHandler: Nullable<(text: string) => void> = null;
-    private setVisibilityHandler: Nullable<(visible: boolean) => void> = null;
-    private setDisabilityHandler: Nullable<(isDisabled: boolean) => void> = null;
-    private setTextColorHandler: Nullable<(color: string) => void> = null;
-    private setColorHandler: Nullable<(color: string) => void> = null;
+    private onClickFn: Nullable<VoidFunction>;
 
     public constructor() {
-        this.tgMainBtn.onClick(() => this.onClickHandler());
+        tgAppWindow.TgApp.mainBtnClickHandler = () => {
+            this.onClickFn && this.onClickFn();
+        };
     }
 
-    public on(fn: HandlerFunction): AppMainButton {
+    public on(handler: VoidFunction): AppMainButton {
         console.debug('AppMainButton::on');
 
-        this.clickHandlerFn = fn;
+        this.tgMainBtn.onClick(handler);
+        this.onClickFn = handler;
 
         return this;
     }
 
-    public off(): AppMainButton {
-        this.clickHandlerFn = null;
+    public off(handler: VoidFunction): AppMainButton {
+        this.tgMainBtn.offClick(handler);
+        this.onClickFn = null;
 
         return this;
     };
@@ -54,12 +59,13 @@ class AppMainButton {
         console.debug('AppMainButton::setText', text);
 
         this.tgMainBtn.setText(text);
-        this.setTextHandler && this.setTextHandler(text);
 
         return this;
     }
 
     public setVisibility(isVisible: boolean): AppMainButton {
+        console.debug('AppMainButton::setVisibility', isVisible);
+
         if (isVisible) {
             this.show();
         } else {
@@ -83,28 +89,24 @@ class AppMainButton {
 
     public show(): AppMainButton {
         this.tgMainBtn.show();
-        this.setVisibilityHandler && this.setVisibilityHandler(true);
 
         return this;
     }
 
     public hide(): AppMainButton {
         this.tgMainBtn.hide();
-        this.setVisibilityHandler && this.setVisibilityHandler(false);
 
         return this;
     }
 
     public disable(): AppMainButton {
         this.tgMainBtn.disable;
-        this.setDisabilityHandler && this.setDisabilityHandler(true);
 
         return this;
     }
 
     public enable(): AppMainButton {
         this.tgMainBtn.enable();
-        this.setDisabilityHandler && this.setDisabilityHandler(false);
 
         return this;
     }
@@ -112,73 +114,59 @@ class AppMainButton {
     public setParams(params: MainBtnParams): AppMainButton {
         this.tgMainBtn.setParams(params);
 
-        params.is_visible !== undefined && this.setVisibility(params.is_visible);
-        params.text && this.setText(params.text);
-        params.text_color && this.setTextColorHandler && this.setTextColorHandler(params.text_color);
-        params.color && this.setColorHandler && this.setColorHandler(params.color);
+        return this;
+    }
+
+    public showProgress(): AppMainButton {
+        this.tgMainBtn.showProgress();
 
         return this;
     }
 
-    public setReactHandlers(
-        setTextHandler: (text: string) => void,
-        setVisibilityHandler: (visible: boolean) => void,
-        setDisabilityHandler: (isDisabled: boolean) => void,
-        setTextColorHandler: (color: string) => void,
-        setColorHandler: (color: string) => void,
-    ): AppMainButton {
-        this.setTextHandler = setTextHandler;
-        this.setVisibilityHandler = setVisibilityHandler;
-        this.setDisabilityHandler = setDisabilityHandler;
-        this.setTextColorHandler = setTextColorHandler;
-        this.setColorHandler = setColorHandler;
+    public hideProgress(): AppMainButton {
+        this.tgMainBtn.hideProgress();
 
         return this;
     }
 
-    public removeReactHandlers(): AppMainButton {
-        this.setTextHandler = null;
-        this.setVisibilityHandler = null;
-        this.setDisabilityHandler = null;
-        this.setTextColorHandler = null;
-        this.setColorHandler = null;
-
-        return this;
-    }
-
-    public onClickHandler() {
-        console.debug('AppMainButton::onClickHandler', !!this.clickHandlerFn, this);
-
-        if (this.clickHandlerFn) {
-            this.clickHandlerFn();
-        }
+    public reset(isVisible: boolean): AppMainButton {
+        return this
+            .enable()
+            .hideProgress()
+            .setVisibility(isVisible);
     }
 }
 
 class AppBackButton {
-    public clickHandlerFn: Nullable<HandlerFunction> = null;
     private tgBackBtn = WebApp.BackButton;
-    private setVisibilityHandler: Nullable<(visible: boolean) => void> = null;
-    private isSupported;
+    private onClickFn: Nullable<VoidFunction>;
+    private readonly isSupported: boolean;
 
     constructor(isSupported: boolean) {
         this.isSupported = isSupported;
-
-        if (this.isSupported) {
-            this.tgBackBtn.onClick(() => this.onClickHandler());
-        }
+        tgAppWindow.TgApp.backBtnClickHandler = () => {
+            this.onClickFn && this.onClickFn();
+        };
     }
 
-    public on(fn: HandlerFunction): AppBackButton {
+    public on(handler: VoidFunction): AppBackButton {
         console.debug('AppBackButton::on');
 
-        this.clickHandlerFn = fn;
+        if (this.isSupported) {
+            this.tgBackBtn.onClick(handler);
+        }
+
+        this.onClickFn = handler;
 
         return this;
     }
 
-    public off(): AppBackButton {
-        this.clickHandlerFn = null;
+    public off(handler: VoidFunction): AppBackButton {
+        if (this.isSupported) {
+            this.tgBackBtn.offClick(handler);
+        }
+
+        this.onClickFn = null;
 
         return this;
     };
@@ -188,8 +176,6 @@ class AppBackButton {
             this.tgBackBtn.show();
         }
 
-        this.setVisibilityHandler && this.setVisibilityHandler(true);
-
         return this;
     }
 
@@ -198,29 +184,7 @@ class AppBackButton {
             this.tgBackBtn.hide();
         }
 
-        this.setVisibilityHandler && this.setVisibilityHandler(false);
-
         return this;
-    }
-
-    public setReactHandlers(
-        setVisibilityHandler: (visible: boolean) => void,
-    ): AppBackButton {
-        this.setVisibilityHandler = setVisibilityHandler;
-
-        return this;
-    }
-
-    public removeReactHandlers(): AppBackButton {
-        this.setVisibilityHandler = null;
-
-        return this;
-    }
-
-    public onClickHandler() {
-        console.debug('AppBackButton::onClickHandler');
-
-        this.clickHandlerFn && this.clickHandlerFn();
     }
 }
 
@@ -255,10 +219,12 @@ class AppController {
     public storage: Storage;
 
     constructor() {
+        tgAppWindow.TgApp = {};
         this.tg = WebApp;
         this.mainButton = new AppMainButton();
         this.backButton = new AppBackButton(this.tg.isVersionAtLeast('6.1'));
         this.storage = new Storage();
+
     }
 
     public ready(): AppController {
@@ -309,6 +275,20 @@ class AppController {
         this.tg.disableClosingConfirmation();
 
         return this;
+    }
+
+    public getUserId(): number {
+        return this.tg.initDataUnsafe?.user?.id ?? DEFAULT_USED_ID;
+    }
+
+    public openInvoice(url: string): Promise<InvoiceStatus> {
+        console.debug('AppController::openInvoice', url);
+
+        return new Promise((resolve) => {
+            this.tg.openInvoice(url, (status: InvoiceStatus) => {
+                resolve(status);
+            });
+        });
     }
 }
 

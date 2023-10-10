@@ -3,11 +3,15 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 $accent-color: #FEB43A;
 
 .screen-block svg {
     fill: $accent-color;
+}
+
+.screen-label {
+    font-size: 0.9rem;
+    color: $accent-color;
 }
 
 .btn-check {

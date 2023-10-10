@@ -3,11 +3,10 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import {
-    createBrowserRouter,
+    createHashRouter,
     createRoutesFromElements,
     Route,
     RouterProvider,
@@ -29,7 +28,7 @@ appController
     .setBackgroundColor('#dad7cd')
     .setHeaderColor('#dad7cd');
 
-const router = createBrowserRouter(createRoutesFromElements(
+const router = createHashRouter(createRoutesFromElements(
     <Route element={ <RootView /> } errorElement={ <AppErrorView /> } path="/">
         <Route path="tour/" element={ <AppTourView /> } />
         <Route path="movies/" element={ <MovieListView /> } />

@@ -3,8 +3,7 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
-import { Router } from 'express';
+import { Router, Request, Response } from 'express';
 import {
     getConfigDetails,
     getMovieImages,
@@ -36,6 +35,8 @@ import {
     ShowTakenSeats,
     GetShowTakenSeatsQueryParams,
     TicketsResponse,
+    GetTicketsQueryParams,
+    ErrorResponse,
 } from '../../../../shared';
 
 const movieRouter = Router();
@@ -133,13 +134,13 @@ movieRouter.get('/config', async (req, res) => {
 });
 
 
-// api/movie/tickets
-movieRouter.get('/tickets', async (req, res) => {
+// api/movie/tickets?owner_id=?
+movieRouter.get('/tickets', async (req: Request<{}, {}, {}, GetTicketsQueryParams>, res: Response<TicketsResponse | ErrorResponse>) => {
     try {
-        const myTickets = await getMyTickets();
+        const myTickets = await getMyTickets(req.query.owner_id);
         const resp: TicketsResponse = {
-            tickets: myTickets.map(({ runtime, title, code, seats, datetime, poster_path }) => ({
-                runtime, title, code, seats, datetime, poster_path
+            tickets: myTickets.map(({ runtime, title, code, seats, date, time, poster_path }) => ({
+                runtime, title, code, seats, date, time, poster_path,
             })),
             num_tickets: myTickets.length,
         };

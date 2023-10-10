@@ -3,7 +3,6 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 import React, { useContext, useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -11,50 +10,20 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Container, Row, Col, ToggleButton } from 'react-bootstrap';
 import autoAnimate from '@formkit/auto-animate';
 import { MovieContext, MovieContextValue } from '../context/MovieContext';
-import appController from '../services/AppController';
-import { MoviesGrid, ErrorIcon } from '../components';
+import app from '../services/AppController';
+import { MoviesGrid, ErrorIcon, TitleLabel } from '../components';
+import { MoviesGridPlaceholder } from '../components/placeholders';
 import { useSet } from '../hooks/useset';
 import { getMyTickets, getNowPlayingMovies, getUpcomingMovies } from '../api';
-import { APP_NAME } from '../consts';
+import { APP_NAME, APP_ROUTES } from '../consts';
 import { timeout } from '../utils';
 import { MovieListItem, MovieGenre, Ticket } from '../../../shared';
 import './MovieListView.scss';
 
 const NUM_PLACEHOLDER_ITEMS_SHOWN: number = 4,
-    LOAD_MOVIE_CELLS_ANIMATION_DELAY_MS: number = 10,
+    LOAD_MOVIE_CELLS_ANIMATION_DELAY_MS: number = 1000,
     moviesSortFn = (a: MovieListItem, b: MovieListItem) => Date.parse(b.release_date) - Date.parse(a.release_date),
     moviesSortReverseFn = (a: MovieListItem, b: MovieListItem) => Date.parse(a.release_date) - Date.parse(b.release_date);
-
-type MoviesGridPlaceholderProps = {
-    size: number;
-}
-
-type TitleLabelProps = {
-    count: number;
-}
-
-const MoviesGridPlaceholder = ({ size }: MoviesGridPlaceholderProps): JSX.Element => (
-    <>
-        {
-            [...new Array(size)].map((_, idx: number) => <div key={ idx }
-                                                              className="card-title placeholder-wave col-6 mb-3">
-                <div className="placeholder w-100 rounded" style={ { height: '200px' } }></div>
-                <div className="placeholder w-100 rounded"></div>
-            </div>)
-        }
-    </>
-);
-
-const TitleLabel = ({ count }: TitleLabelProps): JSX.Element => {
-    const { t } = useTranslation();
-
-    return (
-        <>
-            <div
-                className={ 'text-end text-muted align-baseline' + (!count && ' d-none') }>{ t('movies.title_label', { count: count }) }</div>
-        </>
-    );
-};
 
 export default function MovieListView(): JSX.Element {
     const [nowPlayingMovies, setNowPlayingMovies] = useState<MovieListItem[]>([]);
@@ -68,10 +37,17 @@ export default function MovieListView(): JSX.Element {
     const allCurrentGenres: Set<number> = useSet<number>([]);
     const parent1 = useRef(null);
     const parent2 = useRef(null);
-
-    const navigationThroughMoviesListHandler = () => {
+    const toggleGenre = (genreId: number) => {
+        if (selectedGenres.has(genreId)) {
+            selectedGenres.delete(genreId);
+        } else {
+            selectedGenres.add(genreId);
+        }
+    };
+    const onMainBtnClickHandler = () => {
         console.log('MovieListView::navigationThroughMoviesListHandler');
-        navigate('/tickets', {
+
+        navigate(APP_ROUTES.TICKETS_ROUTE, {
             state: {
                 tickets,
             },
@@ -109,7 +85,7 @@ export default function MovieListView(): JSX.Element {
                 console.error('an error occurred while loading upcoming movies', err);
             });
 
-        getMyTickets()
+        getMyTickets(app.getUserId())
             .then(tr => {
                 setTickets(tr.tickets);
             })
@@ -120,14 +96,16 @@ export default function MovieListView(): JSX.Element {
     }, []);
 
     useEffect(() => {
-        appController.mainButton
-            .enable()
-            .setText(t('My Tickets'))
-            .on(navigationThroughMoviesListHandler)
-            .setVisibility(tickets.length > 0);
+        app.mainButton
+            .reset(tickets.length > 0)
+            .setText(t('movies.main_btn_title'))
+            .on(onMainBtnClickHandler);
+        app.backButton.hide();
 
         return () => {
-            appController.mainButton.off().hide();
+            app.mainButton
+                .hide()
+                .off(onMainBtnClickHandler);
         };
     }, [tickets]);
 
@@ -135,14 +113,6 @@ export default function MovieListView(): JSX.Element {
         parent1.current && autoAnimate(parent1.current);
         parent2.current && autoAnimate(parent2.current);
     }, [parent1, parent2]);
-
-    const toggleGenre = (genreId: number) => {
-        if (selectedGenres.has(genreId)) {
-            selectedGenres.delete(genreId);
-        } else {
-            selectedGenres.add(genreId);
-        }
-    };
 
     return (
         <section>

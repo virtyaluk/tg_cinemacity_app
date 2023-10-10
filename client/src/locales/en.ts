@@ -84,6 +84,7 @@ const en = {
         'schedule_note': 'Please note, we update the schedule every Wed for the week ahead, from Thu till the next Wed.',
         'dat_section_header': 'Date & Time',
         'main_btn_title': 'Pay ${{ amount }}',
+        'screen_label': 'Screen',
     },
 };
 

@@ -3,7 +3,6 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 import { SERVER_API_BASE_URL_PROD, SERVER_API_BASE_URL_DEV } from '../config';
 import {
     ConfigResponse,
@@ -13,6 +12,8 @@ import {
     MovieScheduleResponse,
     ShowTakenSeats,
     TicketsResponse,
+    CreateInvoiceRequestBody,
+    CreateInvoiceResponse,
 } from '../../../shared';
 
 let SERVER_API_BASE_URL = SERVER_API_BASE_URL_DEV;
@@ -89,11 +90,24 @@ export const getTakenSeats = async (movieId: string, showId: string): Promise<Sh
     return await resp.json() as ShowTakenSeats;
 };
 
-export const getMyTickets = async (): Promise<TicketsResponse> => {
+export const getMyTickets = async (ownerId: number): Promise<TicketsResponse> => {
     const resp = await fetch(
-        `${ SERVER_API_BASE_URL }/movie/tickets`,
+        `${ SERVER_API_BASE_URL }/movie/tickets?owner_id=${ ownerId }`,
         { ...commonOptions },
     );
 
     return await resp.json() as TicketsResponse;
+};
+
+export const createInvoice = async (data: CreateInvoiceRequestBody): Promise<CreateInvoiceResponse> => {
+    const resp = await fetch(
+        `${ SERVER_API_BASE_URL }/booking/invoice`,
+        {
+            ...commonOptions,
+            method: 'POST',
+            body: JSON.stringify(data),
+        },
+    );
+
+    return await resp.json() as CreateInvoiceResponse;
 };

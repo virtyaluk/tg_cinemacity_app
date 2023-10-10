@@ -3,22 +3,19 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import './ErrorIcon.scss';
 
-type ErrorIconProps = {}
-
-export default function ErrorIcon({}: ErrorIconProps) {
+export default function ErrorIcon() {
     const { t } = useTranslation();
 
     // @ts-ignore
     return (
         <Container>
-            <Row className='py-5'>
-                <Col xs='12' className='text-center py-5 my-5'>
+            <Row className='py-2'>
+                <Col xs='12' className='text-center'>
                     <div className='error-icon'>
                         <svg
                             xmlns="http://www.w3.org/2000/svg" version="1.1" x="0px" y="0px"

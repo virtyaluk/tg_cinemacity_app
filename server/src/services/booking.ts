@@ -3,25 +3,24 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
-import JSONdb from 'simple-json-db';
 import { DateTime, Duration } from 'luxon';
+import { v4 } from 'uuid';
+import db from './db.js';
 import { getMovieDetails } from './tmdb.js';
-
 import {
     CinemaHallSchema,
     CinemaHallSeatType,
     TicketPrice,
     TicketPrices,
     MovieShowTimeSlot,
-    ShowTakenSeats,
     TakenSeat,
     Ticket,
 } from '../models/services/booking.js';
+import { Invoice, BookingData } from '../models/services/db.js';
 
-const db = new JSONdb('../storage.json');
+type ShowId = `${ number }_${ number }_${ number }_${ number }_${ number }`;
 
-const TAKEN_SEATS_DB_KEY_PREFIX: string = 'taken_seats_';
+const BASE_IMG_URL: string = 'https://image.tmdb.org/t/p/w300';
 const REGULAR_HALL_NUM_ROWS: number = 6;
 const REGULAR_HALL_NUM_VIP_ROWS: number = 1;
 const REGULAR_HALL_NUM_SEATS_PER_ROW: { [key: number]: number } = {
@@ -36,6 +35,12 @@ const REGULAR_HALL_NUM_SEATS_PER_ROW: { [key: number]: number } = {
 const REGULAR_HALL_TICKET_PRICES: TicketPrice = {
     [CinemaHallSeatType.regular]: 500,
     [CinemaHallSeatType.vip]: 700,
+};
+
+const generateShowId = (selectedDate: number, selectedTime: MovieShowTimeSlot): ShowId => {
+    const dt: Date = new Date(selectedDate);
+
+    return `${ dt.getUTCDate() }_${ dt.getUTCMonth() }_${ dt.getUTCFullYear() }_${ selectedTime.hour }_${ selectedTime.minute }`;
 };
 
 export const getHallSchema = async (): Promise<CinemaHallSchema> => {
@@ -65,15 +70,8 @@ export const getTicketPrices = async (): Promise<TicketPrices> => {
     };
 };
 
-export const getTakenSeats = async (showId: string): Promise<TakenSeat[]> => {
-    if (db.has(TAKEN_SEATS_DB_KEY_PREFIX + showId)) {
-        const takenSeats = db.get(TAKEN_SEATS_DB_KEY_PREFIX + showId) as ShowTakenSeats;
-
-        return takenSeats.taken_seats;
-    }
-
-    return [];
-};
+export const getTakenSeats = async (showId: string): Promise<TakenSeat[]> =>
+    db.chain.get('taken_seats').filter({ show_id: showId }).value();
 
 export const getShowTimeSlots = async (movieId: number): Promise<MovieShowTimeSlot[]> => {
     const { runtime } = await getMovieDetails(movieId),
@@ -95,30 +93,132 @@ export const getShowTimeSlots = async (movieId: number): Promise<MovieShowTimeSl
     return slots;
 };
 
-export const getMyTickets = async (): Promise<Ticket[]> => {
+export const getMyTickets = async (ownerId: number): Promise<Ticket[]> => {
+    // return db.chain.get('tickets').filter({ owner_id: ownerId }).value();
+
     return [{
-        owner_id: 'sfsdfasdfasd',
+        owner_id: -1,
         title: 'Barbie',
         poster_path: '/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',
         runtime: 136,
         code: 'shtepan.com',
         seats: [{ row: 6, seat: 4 }],
-        datetime: 1697090400,
+        date: 1697090400,
+        time: {
+            hour: 11,
+            minute: 30,
+        },
     }, {
-        owner_id: 'sfsdfasdfasd',
+        owner_id: -1,
         title: 'Saw X',
         poster_path: '/aQPeznSu7XDTrrdCtT5eLiu52Yu.jpg',
         runtime: 90,
         code: 'shtepan.com',
         seats: [{ row: 6, seat: 4 }, { row: 6, seat: 5 }],
-        datetime: 1696771800,
+        date: 1696771800,
+        time: {
+            hour: 9,
+            minute: 0,
+        },
     }, {
-        owner_id: 'sfsdfasdfasd',
+        owner_id: -1,
         title: 'John Wick: Chapter 4',
         poster_path: '/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
         runtime: 118,
         code: 'shtepan.com',
         seats: [{ row: 6, seat: 3 }, { row: 6, seat: 4 }, { row: 6, seat: 5 }],
-        datetime: 1698252300,
+        date: 1698252300,
+        time: {
+            hour: 18,
+            minute: 45,
+        },
     }];
+};
+
+export const createInvoice = async (ownerId: number, movieId: number, date: number, time: MovieShowTimeSlot, seats: TakenSeat[], lang: string = 'en-US') => {
+    const invoiceId = v4(),
+        movieDetails = await getMovieDetails(movieId, lang),
+        hallSchema = await getHallSchema(),
+        prices = await getTicketPrices(),
+        description = `${ seats.length } seat${ seats.length > 1 && 's' || '' } for ${ time.hour }:${ time.minute.toString().padEnd(2, '0') }, ${ new Date(date).toLocaleDateString(lang, {
+            month: 'short',
+            day: '2-digit',
+        }) }`,
+        invoiceData: Invoice = {
+            chat_id: ownerId,
+            title: movieDetails.title,
+            description,
+            payload: invoiceId,
+            currency: 'USD',
+            prices: seats.map(({ row, seat }) => {
+                const seatType = hallSchema.rows[row].seats[seat].type,
+                    price = prices.prices[seatType];
+
+                return {
+                    label: `Seat ${ row }x${ seat }`,
+                    amount: price,
+                };
+            }),
+        },
+        bookingData: BookingData = {
+            invoice_id: invoiceId,
+            owner_id: ownerId,
+            movie_id: movieDetails.id,
+            movie_title: movieDetails.title,
+            movie_poster_path: movieDetails.poster_path,
+            movie_runtime: movieDetails.runtime,
+            date,
+            time,
+            seats,
+        };
+
+    // Telegram has troubles displaying images from TMDb.
+    // if (movieDetails.poster_path) {
+    //     invoice.photo_url = BASE_IMG_URL + movieDetails.poster_path;
+    //     invoice.photo_width = 300;
+    //     invoice.photo_height = 300;
+    // }
+
+    db.data.invoices.push(invoiceData);
+    db.data.booking_data.push(bookingData);
+    await db.write();
+
+    return invoiceData;
+};
+
+export const confirmPayment = async (invoiceId: string): Promise<boolean> => {
+    if (!invoiceId) {
+        return false;
+    }
+
+    const bookingData: BookingData = db.chain.get('booking_data').find({ invoice_id: invoiceId }).value();
+
+    if (!bookingData) {
+        return false;
+    }
+
+    const showId: string = `${ bookingData.movie_id }_${ generateShowId(bookingData.date, bookingData.time) }`;
+
+    bookingData.seats.forEach(({ row, seat }) => {
+        db.data.taken_seats.push({
+            row,
+            seat,
+            show_id: showId,
+        });
+    });
+
+    db.data.tickets.push({
+        owner_id: bookingData.owner_id,
+        title: bookingData.movie_title,
+        poster_path: bookingData.movie_poster_path,
+        runtime: bookingData.movie_runtime,
+        code: 'shtepan.com',
+        seats: [{ row: 6, seat: 3 }, { row: 6, seat: 4 }, { row: 6, seat: 5 }],
+        date: bookingData.date,
+        time: bookingData.time,
+    });
+
+    await db.write();
+
+    return true;
 };

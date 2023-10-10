@@ -3,6 +3,22 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
+export interface CreateInvoiceRequestBody {
+    owner_id: number;
+    movie_id: number;
+    time: MovieShowTimeSlot;
+    date: number;
+    seats_taken: TakenSeat[];
+    lang?: string;
+}
+
+export interface CreateInvoiceResponse {
+    invoice_url: string;
+}
+
+export interface ErrorResponse {
+    message: string;
+}
 
 export type MovieListItem = {
     backdrop_path: string;
@@ -36,6 +52,10 @@ export type GetConfigQueryParams = {
     lang?: string;
 }
 
+export interface GetTicketsQueryParams {
+    owner_id: number;
+}
+
 export type GetMovieByIdQueryParams = {
     lang?: string;
     include_image_language?: string;
@@ -63,7 +83,8 @@ export type ConfigResponse = {
 export interface Ticket {
     runtime: number;
     title: string;
-    datetime: number;
+    date: number;
+    time: MovieShowTimeSlot;
     code: string;
     seats: TakenSeat[];
     poster_path: string;

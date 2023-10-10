@@ -3,7 +3,6 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 export enum CinemaHallSeatType {
     regular = 0,
     vip = 1,
@@ -46,11 +45,12 @@ export interface ShowTakenSeats {
 }
 
 export interface Ticket {
-    owner_id: string;
+    owner_id: number;
     runtime: number;
     title: string;
-    datetime: number;
     code: string;
     poster_path: string;
     seats: TakenSeat[];
+    date: number;
+    time: MovieShowTimeSlot;
 }

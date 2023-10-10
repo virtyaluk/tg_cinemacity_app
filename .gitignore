@@ -6,3 +6,4 @@ yarn-error.log*
 .snowpack
 # mac
 .DS_Store
+.pem

@@ -3,7 +3,6 @@
  * Copyright (c) 2023 Bohdan Shtepan <bohdan@shtepan.com>
  */
 
-
 import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +10,7 @@ import { Slide, SlideshowRef } from 'react-slideshow-image';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import TextTransition, { presets } from 'react-text-transition';
-import appController from '../services/AppController';
+import app from '../services/AppController';
 import { APP_NAME, APP_TOUR_FINISHED_KEY } from '../consts';
 import 'react-slideshow-image/dist/styles.css';
 import './AppTourView.scss';
@@ -26,16 +25,16 @@ export default function AppTourView(): JSX.Element {
     const [curTourSlide, setCurTourSlide] = useState<number>(0);
     const slideRef = useRef<SlideshowRef>(null);
     const navigate = useNavigate();
-    const navigationThroughAppTourHandler = () => {
+    const onMainBtnClickHandler = () => {
         switch (curTourSlide) {
             case 0:
-                appController.mainButton?.setText(t('app_tour.main_btn_title_next'));
+                app.mainButton.setText(t('app_tour.main_btn_title_next'));
                 break;
             case 1:
-                appController.mainButton?.setText(t('app_tour.main_btn_title_finish'));
+                app.mainButton.setText(t('app_tour.main_btn_title_finish'));
                 break;
             case 2:
-                appController.storage.setItem(APP_TOUR_FINISHED_KEY, 'true').then();
+                app.storage.setItem(APP_TOUR_FINISHED_KEY, 'true').then();
                 navigate('/movies');
                 break;
         }
@@ -45,20 +44,21 @@ export default function AppTourView(): JSX.Element {
     };
 
     useEffect(() => {
-        appController.mainButton
-            ?.show()
+        app.mainButton
+            .reset(true)
             .setText(t('app_tour.main_btn_title_start'));
+        app.backButton.hide();
 
         return () => {
-            appController.mainButton?.hide();
+            app.mainButton.hide();
         };
     }, []);
 
     useEffect(() => {
-        appController.mainButton?.on(navigationThroughAppTourHandler);
+        app.mainButton.on(onMainBtnClickHandler);
 
         return () => {
-            appController.mainButton?.off();
+            app.mainButton.off(onMainBtnClickHandler);
         };
     }, [curTourSlide]);
 
