@@ -58,7 +58,7 @@ bot.on('successful_payment', async (ctx) => {
     if (invoiceId) {
         await confirmPayment(invoiceId);
 
-        await ctx.replyWithMarkdownV2(`Hooray 🤩\\! Your order was successfully paid 💰. You\'ll find your tickets in the app below 👇`, {
+        await ctx.replyWithMarkdownV2(`Hooray 🤩\\! Your order was successfully paid 💰\\. You\'ll find your tickets in the app below 👇`, {
             reply_markup: {
                 inline_keyboard: [[
                     {
