@@ -49,8 +49,6 @@ export default function MovieBookingView() {
             return;
         }
 
-        console.log('can create invoice');
-
         const seatsTaken: TakenSeat[] = [];
 
         selectedSeats.forEach(seat => {
@@ -72,8 +70,6 @@ export default function MovieBookingView() {
             seats_taken: seatsTaken,
         })
             .then(res => {
-                console.log('createInvoice::then', res);
-
                 return app.openInvoice(res.invoice_url);
             })
             .then(status => {
@@ -87,6 +83,9 @@ export default function MovieBookingView() {
             })
             .catch(err => {
                 setAppError(true);
+                app.mainButton
+                    .enable()
+                    .hideProgress();
                 console.error('an error occurred while loading now playing movies', err);
             });
     };

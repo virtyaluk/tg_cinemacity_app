@@ -53,15 +53,25 @@ bot.on('pre_checkout_query', (ctx) => {
 });
 
 bot.on('successful_payment', async (ctx) => {
-    console.log('successful_payment', ctx.update.message.successful_payment);
     const invoiceId: string = ctx.update.message.successful_payment.invoice_payload;
 
     if (invoiceId) {
         await confirmPayment(invoiceId);
 
-        await ctx.reply('SuccessfulPayment');
+        await ctx.replyWithMarkdownV2(`Hooray 🤩\\! Your order was successfully paid 💰. You\'ll find your tickets in the app below 👇`, {
+            reply_markup: {
+                inline_keyboard: [[
+                    {
+                        text: 'Your tickets 🎟️',
+                        web_app: {
+                            url: WEB_APP_URL,
+                        },
+                    },
+                ]],
+            },
+        });
     } else {
-        await ctx.reply('un________SuccessfulPayment');
+        await ctx.reply('We\'re so sorry, we couldn\'t process your payment. Please, try again later.');
     }
 });
 
