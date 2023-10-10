@@ -93,47 +93,8 @@ export const getShowTimeSlots = async (movieId: number): Promise<MovieShowTimeSl
     return slots;
 };
 
-export const getMyTickets = async (ownerId: number): Promise<Ticket[]> => {
-    // return db.chain.get('tickets').filter({ owner_id: ownerId }).value();
-
-    return [{
-        owner_id: -1,
-        title: 'Barbie',
-        poster_path: '/iuFNMS8U5cb6xfzi51Dbkovj7vM.jpg',
-        runtime: 136,
-        code: 'shtepan.com',
-        seats: [{ row: 6, seat: 4 }],
-        date: 1697090400,
-        time: {
-            hour: 11,
-            minute: 30,
-        },
-    }, {
-        owner_id: -1,
-        title: 'Saw X',
-        poster_path: '/aQPeznSu7XDTrrdCtT5eLiu52Yu.jpg',
-        runtime: 90,
-        code: 'shtepan.com',
-        seats: [{ row: 6, seat: 4 }, { row: 6, seat: 5 }],
-        date: 1696771800,
-        time: {
-            hour: 9,
-            minute: 0,
-        },
-    }, {
-        owner_id: -1,
-        title: 'John Wick: Chapter 4',
-        poster_path: '/vZloFAK7NmvMGKE7VkF5UHaz0I.jpg',
-        runtime: 118,
-        code: 'shtepan.com',
-        seats: [{ row: 6, seat: 3 }, { row: 6, seat: 4 }, { row: 6, seat: 5 }],
-        date: 1698252300,
-        time: {
-            hour: 18,
-            minute: 45,
-        },
-    }];
-};
+export const getMyTickets = async (ownerId: number): Promise<Ticket[]> =>
+    db.chain.get('tickets').filter({ owner_id: ownerId }).value();
 
 export const createInvoice = async (ownerId: number, movieId: number, date: number, time: MovieShowTimeSlot, seats: TakenSeat[], lang: string = 'en-US') => {
     const invoiceId = v4(),
