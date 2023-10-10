@@ -12,7 +12,7 @@ const providerToken = process.env.PROVIDER_TOKEN as string;
 const bot = new Telegraf(botToken);
 const WEB_APP_URL: string = 'https://lab.modern-dev.com/';
 
-bot.telegram.setWebhook('https://lab.modern-dev.com/tgbot');
+// bot.telegram.setWebhook('https://lab.modern-dev.com/tgbot');
 
 bot.use(Telegraf.log());
 
