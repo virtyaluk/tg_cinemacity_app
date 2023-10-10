@@ -6,7 +6,7 @@
 import React from 'react';
 import { createRoot, Root } from 'react-dom/client';
 import {
-    createHashRouter,
+    createBrowserRouter,
     createRoutesFromElements,
     Route,
     RouterProvider,
@@ -28,7 +28,7 @@ appController
     .setBackgroundColor('#dad7cd')
     .setHeaderColor('#dad7cd');
 
-const router = createHashRouter(createRoutesFromElements(
+const router = createBrowserRouter(createRoutesFromElements(
     <Route element={ <RootView /> } errorElement={ <AppErrorView /> } path="/">
         <Route path="tour/" element={ <AppTourView /> } />
         <Route path="movies/" element={ <MovieListView /> } />
