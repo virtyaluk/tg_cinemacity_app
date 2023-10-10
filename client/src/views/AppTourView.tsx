@@ -83,7 +83,7 @@ export default function AppTourView(): JSX.Element {
                 </Slide>
             </Container>
 
-            <Container className="gx-5 my-3">
+            <Container className="gx-5 my-3 pb-3">
                 <Row className="gx-5">
                     <Col xs={ 12 } className="px-5 text-center">
                         <TextTransition className="fs-1 fw-bold" springConfig={ presets.gentle }>
