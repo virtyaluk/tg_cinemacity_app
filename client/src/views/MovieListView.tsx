@@ -132,7 +132,7 @@ export default function MovieListView(): JSX.Element {
                         <h3>{ t('movies.categories_section_title') }</h3>
                     </Col>
                 </Row>
-                <Row className="my-2 mb-3">
+                <Row className="my-2 mb-3 pe-2">
                     <Col xs="12">
                         <div className="category-list">
                             <div>

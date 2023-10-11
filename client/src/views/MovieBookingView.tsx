@@ -281,7 +281,7 @@ export default function MovieBookingView() {
 
                 <Row>
                     <Col xs={ 12 } className="px-4">
-                        <p className="schedule-note mb-0 text-muted fw-normal pt-1 pb-3">
+                        <p className="schedule-note mb-0 text-muted fw-normal pt-1 pb-3 text-center">
                             { t('booking.schedule_note') }
                         </p>
                     </Col>

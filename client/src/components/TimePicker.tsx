@@ -42,7 +42,7 @@ const TimePicker = ({ showtime_slots, selectedTime, setSelectedTime, selectedDat
                     type="radio" variant=""
                     className="m-0 p-0">
                     <div
-                        className="d-inline-block bg-body-secondary px-3 py-1 fs-6 fst-normal rounded-3 me-2">
+                        className="time-item d-inline-block bg-body-secondary px-3 py-1 fs-6 fst-normal rounded-3 me-2">
                         { slot.hour }:{ slot.minute.toString().padEnd(2, '0') }
                     </div>
 

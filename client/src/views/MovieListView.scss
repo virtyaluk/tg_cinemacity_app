@@ -16,9 +16,8 @@
     }
 
     label.btn {
-        //background-color: $secondary-color;
-        background-color: var(--tg-theme-button-color, darkgray);
-        color: var(--tg-theme-button-text-color, white) !important;
+        background-color: var(--tg-theme-button-color, $secondary-color);
+        color: var(--tg-theme-button-text-color, black) !important;
 
         outline: none;
         float: left;
@@ -30,8 +29,8 @@
     }
 
     input.btn-check:focus + label.btn {
-        background-color: var(--tg-theme-button-color, darkgray) !important;
-        color: white !important;
+        background-color: var(--tg-theme-button-color, $secondary-color);
+        color: var(--tg-theme-button-text-color, black) !important;
     }
 
     input.btn-check:hover + label.btn,

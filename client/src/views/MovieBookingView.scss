@@ -93,6 +93,13 @@ label.btn {
         min-width: max-content;
     }
 
+    label.btn:last-child {
+        .date-item,
+        .time-item {
+            margin-right: 0 !important;
+        }
+    }
+
     input.btn-check + label.btn > div {
         transition: background-color 0.15s ease-in;
     }
