@@ -52,16 +52,18 @@ const TicketView = ({ ticket }: TicketViewProps) => {
                     </p>
                 </Col>
                 <Col xs={ 12 }>
-                    <h3 className="text-center fw-bold">{ ticket.title }</h3>
+                    <h3 className="text-center fw-bold text-dark">{ ticket.title }</h3>
                 </Col>
                 <Col xs={ 12 }>
-                    <p className="text-center my-1">{ date }, { time }</p>
+                    <p className="text-center my-1 text-dark">{ date }, { time }</p>
                 </Col>
                 <Col xs={ 12 } className="text-center py-2">
-                    <p className="seats-label mb-0 rounded-5 border-1 border-black d-inline px-3 py-1">
-                        <span className="text-muted">{ t('my_tickets.seats_label') }: </span>{
-                        ticket.seats.map(({ row, seat }) => `${ row }x${ seat }`).join(', ')
-                    }</p>
+                    <p className="seats-label mb-0 rounded-5 border-1 border-black d-inline px-3 py-1 text-dark">
+                        <span className="text-muted">{ t('my_tickets.seats_label') }: </span>
+                        {
+                            ticket.seats.map(({ row, seat }) => `${ row }x${ seat }`).join(', ')
+                        }
+                    </p>
                 </Col>
                 <Col xs={ 12 } className="text-center pb-2 px-0">
                     <Barcode format={ 'CODE39' } value={ ticket.code } width={ 1.2 } height={ 40 }

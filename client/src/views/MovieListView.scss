@@ -18,7 +18,7 @@
     label.btn {
         //background-color: $secondary-color;
         background-color: var(--tg-theme-button-color);
-        color: var(--tg-theme-button-text-color);
+        color: var(--tg-theme-button-text-color) !important;
 
         outline: none;
         float: left;
@@ -30,7 +30,7 @@
     }
 
     input.btn-check:focus + label.btn {
-        background-color: gray !important;
+        background-color: var(--tg-theme-button-color) !important;
         color: white !important;
     }
 

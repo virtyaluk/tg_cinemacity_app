@@ -12,7 +12,7 @@ type MoviePosterLabelProps = {
 const MoviePosterLabel = ({ label }: MoviePosterLabelProps): JSX.Element => (
     <>
         <div className='position-absolute w-100 bottom-0 start-0 bg-warning p-1 text-center'>
-            <p className='m-0 fw-medium fst-italic fs-5'>{ label }</p>
+            <p className='m-0 fw-medium fst-italic fs-5 text-dark'>{ label }</p>
         </div>
     </>
 );

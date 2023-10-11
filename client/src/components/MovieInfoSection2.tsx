@@ -27,7 +27,7 @@ const MovieInfoSection2 = ({ movieDetails, movieCast, imgUrlPrefix }: MovieInfoS
             </Row>
             <Row>
                 <Col xs="12">
-                    <p>{ movieDetails.overview }</p>
+                    <p className='text-dark'>{ movieDetails.overview }</p>
                 </Col>
             </Row>
             <Row>

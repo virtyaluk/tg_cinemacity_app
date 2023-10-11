@@ -25,7 +25,7 @@
         position: absolute;
         width: 40px;
         height: 40px;
-        background-color: $bg-color;
+        background-color: var(--tg-theme-secondary-bg-color);
         border-radius: 100%;
         bottom: -20px;
     }
