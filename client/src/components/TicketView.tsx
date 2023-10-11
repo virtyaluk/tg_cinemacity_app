@@ -23,7 +23,7 @@ const TicketView = ({ ticket }: TicketViewProps) => {
     const runtimeStr = `${ Math.floor((ticket.runtime ?? 0) / 60) }${ t('general.hours_short') } ${ (ticket.runtime ?? 0) % 60 }${ t('general.minutes_short') }`,
         posterSize: string = getPoster(movieConfig.images.backdrop_sizes, 1),
         imgUrlPrefix: string = `${ movieConfig.images.secure_base_url }${ posterSize }`,
-        dt = new Date(ticket.date * 1000);
+        dt = new Date(ticket.date);
 
     dt.setHours(ticket.time.hour, ticket.time.minute);
 

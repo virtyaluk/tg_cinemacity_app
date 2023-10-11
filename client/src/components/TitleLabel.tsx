@@ -15,7 +15,7 @@ const TitleLabel = ({ count }: TitleLabelProps): JSX.Element => {
 
     return (
         <>
-            <div className={ 'text-end align-baseline tg-text-muted' + (!count && ' d-none') }>
+            <div className={ 'text-end align-baseline tg-text-muted' + (!count && ' d-none' || '') }>
                 { t('movies.title_label', { count: count }) }
             </div>
         </>
