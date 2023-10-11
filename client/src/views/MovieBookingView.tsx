@@ -249,7 +249,7 @@ export default function MovieBookingView() {
             <Container className="bg-white pt-3 mt-3 rounded-top-5">
                 <Row>
                     <Col xs={ 12 } className="text-center">
-                        <h6 className="fw-medium">{ t('booking.dat_section_header') }</h6>
+                        <h6 className="fw-medium text-dark">{ t('booking.dat_section_header') }</h6>
                     </Col>
                 </Row>
 

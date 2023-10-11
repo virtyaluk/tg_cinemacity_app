@@ -22,7 +22,7 @@ const MovieInfoSection2 = ({ movieDetails, movieCast, imgUrlPrefix }: MovieInfoS
         <Container className="pb-2">
             <Row>
                 <Col xs="12">
-                    <h3>{ t('movie_details.synopsis_section_title') }</h3>
+                    <h3 className='text-dark'>{ t('movie_details.synopsis_section_title') }</h3>
                 </Col>
             </Row>
             <Row>
@@ -32,7 +32,7 @@ const MovieInfoSection2 = ({ movieDetails, movieCast, imgUrlPrefix }: MovieInfoS
             </Row>
             <Row>
                 <Col xs="12">
-                    <h3>{ t('movie_details.cast_section_title') }</h3>
+                    <h3 className='text-dark'>{ t('movie_details.cast_section_title') }</h3>
                 </Col>
             </Row>
             <Row>

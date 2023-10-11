@@ -6,6 +6,8 @@
 
 import { ConfigResponse } from '../../shared';
 
+type Color = `#${string}`;
+
 export const APP_NAME: string = 'Cinema City';
 export const DAYS_SINCE_RELEASE_PREMIERE: number = 7;
 export const DAYS_UNTIL_RELEASE_AVAILABLE: number = 7;
@@ -27,6 +29,9 @@ export const APP_ROUTES = {
     MOVIES_LIST_ROUTE: '/movies',
     MOVIE_BOOKING: 'booking/',
 };
+
+export const APP_MAIN_BTN_TEXT_COLOR: Color = '#000000';
+export const APP_MAIN_BTN_COLOR: Color = '#FFB800';
 
 export const INIT_MOVIE_CONFIG: ConfigResponse = {
     images: {

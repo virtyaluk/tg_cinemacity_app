@@ -15,6 +15,8 @@ import {
     MOVIE_CONFIG_KEY,
     APP_TOUR_FINISHED_KEY,
     APP_ROUTES,
+    APP_MAIN_BTN_TEXT_COLOR,
+    APP_MAIN_BTN_COLOR,
 } from '../consts';
 import { ConfigResponse } from '../../../shared';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -70,8 +72,8 @@ export default function RootView(): JSX.Element {
     useEffect(() => {
         app.backButton.on(onBackBtnClickHandler);
         app.mainButton.setParams({
-            color: '#FFB800',
-            text_color: '#000000',
+            color: APP_MAIN_BTN_COLOR,
+            text_color: APP_MAIN_BTN_TEXT_COLOR,
         });
 
         return () => {
@@ -80,14 +82,12 @@ export default function RootView(): JSX.Element {
     }, []);
 
     return (
-        <div data-bs-theme="light">
-            <MovieContext.Provider value={ { movieConfig } }>
-                <AnimatePresence>
-                    <Outlet />
-                </AnimatePresence>
+        <MovieContext.Provider value={ { movieConfig } }>
+            <AnimatePresence>
+                <Outlet />
+            </AnimatePresence>
 
-                <ScrollRestoration />
-            </MovieContext.Provider>
-        </div>
+            <ScrollRestoration />
+        </MovieContext.Provider>
     );
 }
