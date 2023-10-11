@@ -8,6 +8,7 @@ import { useParams } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Col, Container, Row } from 'react-bootstrap';
+import ReactPullToRefresh from 'react-pull-to-refresh';
 import autoAnimate from '@formkit/auto-animate';
 import { getMovieSchedule, getTakenSeats, createInvoice } from '../api';
 import { useSet } from '../hooks/useset';
@@ -28,6 +29,8 @@ const generateShowId = (selectedDate: number, selectedTime: MovieShowTimeSlot): 
 };
 
 const getTakenSeatKey = ({ row, seat }: TakenSeat): TakenSeatKey => `${ row }_${ seat }`;
+const DEFAULT_SELECTED_TIME: MovieShowTimeSlot = { hour: -1, minute: -1 };
+const DEFAULT_SELECTED_DATE: number = 0;
 
 export default function MovieBookingView() {
     const { movieId } = useParams();
@@ -35,13 +38,28 @@ export default function MovieBookingView() {
     const [movieSchedule, setMovieSchedule] = useState<MovieScheduleResponse>();
     const [appError, setAppError] = useState<boolean>(false);
     const [dateSlots, setDateSlots] = useState<number[]>([]);
-    const [selectedTime, setSelectedTime] = useState<MovieShowTimeSlot>({ hour: -1, minute: -1 });
-    const [selectedDate, setSelectedDate] = useState<number>(0);
+    const [selectedTime, setSelectedTime] = useState<MovieShowTimeSlot>(DEFAULT_SELECTED_TIME);
+    const [selectedDate, setSelectedDate] = useState<number>(DEFAULT_SELECTED_DATE);
     const selectedSeats = useSet<CinemaHallSeatSchema>([]);
-    const takenSeats = useSet<TakenSeatKey>(['3_3']);
+    const takenSeats = useSet<TakenSeatKey>([]);
     const parent1 = useRef(null);
     const parent2 = useRef(null);
+    const fetchData = async (makeBrr: boolean = true) => {
+        getMovieSchedule(movieId ?? '0')
+            .then(msr => {
+                setMovieSchedule(msr);
+                updateAvailableDateSlots();
+                setAppError(false);
+            })
+            .catch(err => {
+                setAppError(true);
+                console.error('an error occurred while loading now playing movies', err);
+            });
 
+        if (makeBrr) {
+            app.brr.impact('light');
+        }
+    };
     const onMainBtnClickHandler = () => {
         console.log('process to booking', selectedTime, selectedDate, selectedSeats.size);
 
@@ -118,15 +136,7 @@ export default function MovieBookingView() {
 
     // Used to fetch current hall schema, prices and time slots.
     useEffect(() => {
-        getMovieSchedule(movieId ?? '0')
-            .then(msr => {
-                setMovieSchedule(msr);
-                updateAvailableDateSlots();
-            })
-            .catch(err => {
-                setAppError(true);
-                console.error('an error occurred while loading now playing movies', err);
-            });
+        fetchData(false).then();
     }, []);
 
     useEffect(() => {
@@ -146,6 +156,10 @@ export default function MovieBookingView() {
 
     // Fetch taken seats each time a selected time changes
     useEffect(() => {
+        if (selectedTime == DEFAULT_SELECTED_TIME) {
+            return;
+        }
+
         const showId: ShowId = generateShowId(selectedDate, selectedTime);
 
         getTakenSeats(movieId ?? '0', showId)
@@ -186,7 +200,7 @@ export default function MovieBookingView() {
     }, [selectedSeats.size, selectedDate, selectedTime]);
 
     return (
-        <>
+        <ReactPullToRefresh onRefresh={ fetchData } resistance={ 7 }>
             <HelmetProvider>
                 <Helmet>
                     <title>{ `${ t('booking.page_title') } | ${ APP_NAME }` }</title>
@@ -278,6 +292,6 @@ export default function MovieBookingView() {
                     </Col>
                 </Row>
             </Container>
-        </>
+        </ReactPullToRefresh>
     );
 }

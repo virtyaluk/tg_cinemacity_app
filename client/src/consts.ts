@@ -14,6 +14,13 @@ export const DAYS_IN_CINEMA_SINCE_RELEASE: number = 7 * 6; // 6 weeks
 export const MOVIE_CONFIG_KEY: string = 'mov_cfg';
 export const APP_TOUR_FINISHED_KEY: string = 'app_tour_finished';
 
+// Cache control
+export const GET_MOVIE_CONFIG_CACHE_TTL_SECONDS: number = 180 * 24 * 60 * 60; // 180 days
+export const GET_NOW_PLAYING_MOVIES_CACHE_TTL_SECONDS: number = 12 * 60 * 60; // 12 hours
+export const GET_UPCOMING_MOVIES_CACHE_TTL_SECONDS: number = 12 * 60 * 60; // 12 hours
+export const GET_MOVIE_DETAILS_CACHE_TTL_SECONDS: number = 12 * 60 * 60; // 12 hours
+export const GET_MOVIE_CREDITS_CACHE_TTL_SECONDS: number = 12 * 60 * 60; // 12 hours
+
 export const APP_ROUTES = {
     TOUR_ROUTE: '/tour',
     TICKETS_ROUTE: '/tickets',

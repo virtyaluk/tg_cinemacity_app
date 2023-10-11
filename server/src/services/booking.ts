@@ -93,8 +93,17 @@ export const getShowTimeSlots = async (movieId: number): Promise<MovieShowTimeSl
     return slots;
 };
 
-export const getMyTickets = async (ownerId: number): Promise<Ticket[]> =>
-    db.chain.get('tickets').filter({ owner_id: ownerId }).value();
+export const getMyTickets = async (ownerId: number): Promise<Ticket[]> => db.chain.get('tickets').filter(t => {
+    if (t.owner_id != ownerId) {
+        return false;
+    }
+
+    const ds: Date = new Date(t.date),
+        now = new Date(Date.now() - 1000 * 60 * 60 * 2);
+    ds.setHours(t.time.hour, t.time.minute);
+
+    return now < ds;
+}).value();
 
 export const createInvoice = async (ownerId: number, movieId: number, date: number, time: MovieShowTimeSlot, seats: TakenSeat[], lang: string = 'en-US') => {
     const invoiceId = v4(),

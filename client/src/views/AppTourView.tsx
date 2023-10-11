@@ -34,8 +34,11 @@ export default function AppTourView(): JSX.Element {
                 app.mainButton.setText(t('app_tour.main_btn_title_finish'));
                 break;
             case 2:
-                app.storage.setItem(APP_TOUR_FINISHED_KEY, 'true').then();
-                navigate('/movies');
+                app.storage
+                    .setItem(APP_TOUR_FINISHED_KEY, 'true')
+                    .then(() => {
+                        navigate('/movies');
+                    });
                 break;
         }
 

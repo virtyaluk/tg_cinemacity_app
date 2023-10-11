@@ -4,7 +4,7 @@
  */
 
 import localforage from 'localforage';
-import { getItem, setItem } from './TgCloudStorage';
+import * as cloudStorage from './TgCloudStorage';
 import { Telegram, WebApp, WebApp as WebAppTypes } from '../../../shared';
 
 type Nullable<T> = T | null | undefined;
@@ -189,32 +189,69 @@ class AppBackButton {
 }
 
 class Storage {
-    private isCsSupported: boolean;
+    private readonly isSupported: boolean;
 
-    constructor() {
-        this.isCsSupported = WebApp.isVersionAtLeast('6.9');
+    constructor(isSupported: boolean) {
+        this.isSupported = isSupported;
     }
 
     public async getItem(key: string): Promise<Nullable<string>> {
-        if (this.isCsSupported) {
-            return getItem(key);
+        if (this.isSupported) {
+            return await cloudStorage.getItem(key);
         }
 
-        return localforage.getItem<string>(key);
+        return await localforage.getItem<string>(key);
     }
 
     public async setItem(key: string, value: string): Promise<Nullable<boolean | string>> {
-        if (this.isCsSupported) {
-            return setItem(key, value);
+        if (this.isSupported) {
+            return await cloudStorage.setItem(key, value);
         }
 
-        return localforage.setItem(key, value);
+        return await localforage.setItem(key, value);
+    }
+}
+
+type ImpactStyle = 'light' | 'medium' | 'heavy' | 'rigid' | 'soft';
+type NotificationStyle = 'error' | 'success' | 'warning';
+
+class HapticFeedback {
+    private readonly isSupported: boolean;
+    private hf = WebApp.HapticFeedback;
+
+    constructor(isSupported: boolean) {
+        this.isSupported = isSupported;
+    }
+
+    public impact(style: ImpactStyle): HapticFeedback {
+        if (this.isSupported) {
+            this.hf.impactOccurred(style);
+        }
+
+        return this;
+    }
+
+    public notification(style: NotificationStyle): HapticFeedback {
+        if (this.isSupported) {
+            this.hf.notificationOccurred(style);
+        }
+
+        return this;
+    }
+
+    public selectionChanged(): HapticFeedback {
+        if (this.isSupported) {
+            this.hf.selectionChanged();
+        }
+
+        return this;
     }
 }
 
 class AppController {
     public mainButton: AppMainButton;
     public backButton: AppBackButton;
+    public brr: HapticFeedback;
     private tg: WebApp;
     public storage: Storage;
 
@@ -223,8 +260,8 @@ class AppController {
         this.tg = WebApp;
         this.mainButton = new AppMainButton();
         this.backButton = new AppBackButton(this.tg.isVersionAtLeast('6.1'));
-        this.storage = new Storage();
-
+        this.storage = new Storage(this.tg.isVersionAtLeast('6.9'));
+        this.brr = new HapticFeedback(this.tg.isVersionAtLeast('6.1'));
     }
 
     public ready(): AppController {

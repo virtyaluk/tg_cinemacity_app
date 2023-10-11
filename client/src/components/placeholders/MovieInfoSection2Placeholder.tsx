@@ -10,20 +10,20 @@ const MovieInfoSection2Placeholder = () => (
     <Container className="pb-2 placeholder-wave">
         <Row>
             <Col xs="12">
-                <div className="w-100 placeholder placeholder-lg"></div>
+                <div className="w-100 placeholder placeholder-lg rounded-3"></div>
             </Col>
         </Row>
         <Row>
             <Col xs="12">
-                <div className="w-100 placeholder placeholder-sm"></div>
-                <div className="w-100 placeholder placeholder-sm"></div>
-                <div className="w-100 placeholder placeholder-sm"></div>
-                <div className="w-100 placeholder placeholder-sm"></div>
+                <div className="w-100 placeholder placeholder-sm rounded-3"></div>
+                <div className="w-100 placeholder placeholder-sm rounded-3"></div>
+                <div className="w-100 placeholder placeholder-sm rounded-3"></div>
+                <div className="w-100 placeholder placeholder-sm rounded-3"></div>
             </Col>
         </Row>
         <Row>
             <Col xs="12" className="mt-2">
-                <div className="w-100 placeholder placeholder-lg"></div>
+                <div className="w-100 placeholder placeholder-lg rounded-3"></div>
             </Col>
         </Row>
         <Row>

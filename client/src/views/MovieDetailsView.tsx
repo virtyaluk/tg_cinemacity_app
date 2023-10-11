@@ -4,11 +4,12 @@
  */
 
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Container, Row, Col } from 'react-bootstrap';
 import autoAnimate from '@formkit/auto-animate';
+import ReactPullToRefresh from 'react-pull-to-refresh';
 import { getMovieDetails, getMovieCredits } from '../api';
 import { ErrorIcon, MovieInfoSection1, MovieInfoSection2, MovieDateTag } from '../components';
 import {
@@ -25,16 +26,18 @@ import {
     DAYS_IN_CINEMA_SINCE_RELEASE,
 } from '../consts';
 import { getPoster } from '../utils';
-import { MovieDetailsResponse, MovieCastMember } from '../../../shared';
+import { MovieDetailsResponse, MovieCastMember, MovieListItem } from '../../../shared';
 import './MovieDetailsView.scss';
 
 export default function MovieDetailsView() {
     const { movieId } = useParams();
     const [movieDetails, setMovieDetails] = useState<MovieDetailsResponse>();
+    const [movieItem, setMovieItem] = useState<MovieListItem>();
     const [movieCast, setMovieCast] = useState<MovieCastMember[]>([]);
     const [appError, setAppError] = useState<boolean>(false);
     const { movieConfig } = useContext(MovieContext);
     const navigate = useNavigate();
+    const location = useLocation();
     const { t } = useTranslation();
     const parent1 = useRef(null);
     const parent2 = useRef(null);
@@ -44,12 +47,12 @@ export default function MovieDetailsView() {
     const onMainBtnClickHandler = () => {
         navigate(APP_ROUTES.MOVIE_BOOKING);
     };
-
-    useEffect(() => {
+    const fetchData = async(makeBrr: boolean = true) => {
         // Load movie details.
         getMovieDetails(movieId ?? '', 'en', 'en', 0, 0, 0)
             .then(movieDetailsResp => {
                 setMovieDetails(movieDetailsResp);
+                setAppError(false);
             })
             .catch(err => {
                 setAppError(true);
@@ -57,14 +60,23 @@ export default function MovieDetailsView() {
             });
 
         // Load movie cast.
-        getMovieCredits(movieId ?? '', 'en-US', 10)
+        await getMovieCredits(movieId ?? '', 'en-US', 10)
             .then(movieCastResp => {
                 setMovieCast(movieCastResp.cast);
+                setAppError(false);
             })
             .catch(err => {
                 setAppError(true);
                 console.error('an error occurred while loading movie cast', err);
             });
+
+        if (makeBrr) {
+            app.brr.impact('light');
+        }
+    };
+
+    useEffect(() => {
+        fetchData(false).then();
     }, []);
 
     useEffect(() => {
@@ -96,13 +108,19 @@ export default function MovieDetailsView() {
     }, [movieDetails]);
 
     useEffect(() => {
+        if (location?.state?.movie) {
+            setMovieItem(location.state.movie as MovieListItem);
+        }
+    }, [location]);
+
+    useEffect(() => {
         parent1.current && autoAnimate(parent1.current);
         parent2.current && autoAnimate(parent2.current);
         parent3.current && autoAnimate(parent3.current);
     }, [parent1, parent2, parent3]);
 
     return (
-        <>
+        <ReactPullToRefresh onRefresh={ fetchData } resistance={ 7 }>
             <HelmetProvider>
                 <Helmet>
                     <title>{ `${ movieDetails?.title } | ${ APP_NAME }` }</title>
@@ -113,7 +131,7 @@ export default function MovieDetailsView() {
 
             <div
                 className={ 'movie-main-poster d-flex align-items-start flex-column text-white w-100' + (appError && ' d-none' || '') }
-                style={ { backgroundImage: `url(' ${ movieDetails ? movieDetails.poster_path ? imgUrlPrefix + movieDetails?.poster_path : '/assets/no_photo.jpg' : '' }')` } }>
+                style={ { backgroundImage: `url(' ${ (movieDetails || movieItem) ? (movieDetails || movieItem)?.poster_path ? imgUrlPrefix + (movieDetails || movieItem)?.poster_path : '/assets/no_photo.jpg' : '' }')` } }>
                 <div className="mb-auto p-2"></div>
                 <Container className="pt-4" ref={ parent1 }>
                     {
@@ -125,7 +143,8 @@ export default function MovieDetailsView() {
                             <div className="movie-date-tag w-100 position-relative bg-white rounded-5 rounded-bottom-0"
                                  ref={ parent3 }>
                                 {
-                                    movieDetails && <MovieDateTag movieDetails={ movieDetails } /> ||
+                                    (movieDetails || movieItem) &&
+                                    <MovieDateTag movieDetails={ movieDetails || movieItem } /> ||
                                     <MovieDateTagPlaceholder />
                                 }
                             </div>
@@ -140,6 +159,6 @@ export default function MovieDetailsView() {
                     <MovieInfoSection2Placeholder />
                 }
             </div>
-        </>
+        </ReactPullToRefresh>
     );
 }

@@ -11,7 +11,10 @@ import { CreateInvoiceRequestBody, CreateInvoiceResponse, ErrorResponse } from '
 const bookingRouter = Router();
 
 // api/booking/invoice
-bookingRouter.post('/invoice', async (req: Request<{}, {}, CreateInvoiceRequestBody>, res: Response<CreateInvoiceResponse | ErrorResponse>) => {
+bookingRouter.post('/invoice', async (
+    req: Request<{}, {}, CreateInvoiceRequestBody>,
+    res: Response<CreateInvoiceResponse | ErrorResponse>,
+) => {
     try {
         const rb = req.body;
         const invoiceData = await createInvoice(rb.owner_id, rb.movie_id, rb.date, rb.time, rb.seats_taken, rb.lang);

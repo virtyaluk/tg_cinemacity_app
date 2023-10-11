@@ -39,13 +39,20 @@ import {
     ErrorResponse,
 } from '../../../../shared';
 
+interface MovieRouterParams {
+    id: string;
+}
+
 const movieRouter = Router();
 const movieImagesMapperFn = ({ height, width, file_path }: MovieImage) => ({ height, width, file_path });
 
 // api/movie/now_playing
-movieRouter.get('/now_playing', async (req, res) => {
+movieRouter.get('/now_playing', async (
+    req: Request<{}, {}, {}, NowPlayingQueryParams>,
+    res: Response<MovieListResponse | ErrorResponse>,
+) => {
     try {
-        const { lang, page, region }: NowPlayingQueryParams = req.query;
+        const { lang, page, region } = req.query;
         const nowPlaying = await getNowPlaying(lang, parseInt(page ?? '1'), region);
         const resp: MovieListResponse = {
             page: nowPlaying.page,
@@ -77,10 +84,13 @@ movieRouter.get('/now_playing', async (req, res) => {
 });
 
 // api/movie/upcoming
-movieRouter.get('/upcoming', async (req, res) => {
+movieRouter.get('/upcoming', async (
+    req: Request<{}, {}, {}, NowPlayingQueryParams>,
+    res: Response<MovieListResponse | ErrorResponse>,
+) => {
     try {
 
-        const { lang, page, region }: NowPlayingQueryParams = req.query;
+        const { lang, page, region } = req.query;
         const nowPlaying = await getUpcoming(lang, parseInt(page ?? '1'), region);
         const resp: MovieListResponse = {
             page: nowPlaying.page,
@@ -112,9 +122,12 @@ movieRouter.get('/upcoming', async (req, res) => {
 });
 
 // api/movie/config
-movieRouter.get('/config', async (req, res) => {
+movieRouter.get('/config', async (
+    req: Request<{}, {}, {}, GetConfigQueryParams>,
+    res: Response<ConfigResponse | ErrorResponse>,
+) => {
     try {
-        const { lang }: GetConfigQueryParams = req.query;
+        const { lang } = req.query;
         const { images } = await getConfigDetails();
         const { genres } = await getMovieGenres(lang);
         const resp: ConfigResponse = {
@@ -135,7 +148,10 @@ movieRouter.get('/config', async (req, res) => {
 
 
 // api/movie/tickets?owner_id=?
-movieRouter.get('/tickets', async (req: Request<{}, {}, {}, GetTicketsQueryParams>, res: Response<TicketsResponse | ErrorResponse>) => {
+movieRouter.get('/tickets', async (
+    req: Request<{}, {}, {}, GetTicketsQueryParams>,
+    res: Response<TicketsResponse | ErrorResponse>,
+) => {
     try {
         const myTickets = await getMyTickets(req.query.owner_id);
         const resp: TicketsResponse = {
@@ -153,16 +169,19 @@ movieRouter.get('/tickets', async (req: Request<{}, {}, {}, GetTicketsQueryParam
 });
 
 // api/movie/:id
-movieRouter.get('/:id', async (req, res) => {
+movieRouter.get('/:id', async (
+    req: Request<MovieRouterParams, {}, {}, GetMovieByIdQueryParams>,
+    res: Response<MovieDetailsResponse | ErrorResponse>,
+) => {
     try {
-        const movieId = parseInt(req.params.id),
+        const movieId: number = parseInt(req.params.id),
             {
                 lang,
                 include_image_language,
                 posters_count,
                 logos_count,
                 backdrops_count,
-            }: GetMovieByIdQueryParams = req.query,
+            } = req.query,
             {
                 id,
                 title,
@@ -208,10 +227,13 @@ movieRouter.get('/:id', async (req, res) => {
 });
 
 // api/movie/:id/credits?lang=&cast_count=
-movieRouter.get('/:id/credits', async (req, res) => {
+movieRouter.get('/:id/credits', async (
+    req: Request<MovieRouterParams, {}, {}, GetMovieCreditsByIdQueryParams>,
+    res: Response<MovieCreditsResponse | ErrorResponse>,
+) => {
     try {
-        const movieId = parseInt(req.params.id);
-        const { lang, cast_count }: GetMovieCreditsByIdQueryParams = req.query;
+        const movieId: number = parseInt(req.params.id);
+        const { lang, cast_count } = req.query;
         const { id, cast } = await getMovieCredits(movieId, lang);
         const resp: MovieCreditsResponse = {
             id,
@@ -226,12 +248,14 @@ movieRouter.get('/:id/credits', async (req, res) => {
 });
 
 // api/movie/:id/schedule
-movieRouter.get('/:id/schedule', async (req, res) => {
+movieRouter.get('/:id/schedule', async (
+    req: Request<MovieRouterParams>,
+    res: Response<MovieScheduleResponse | ErrorResponse>,
+) => {
     try {
-        const movieId = parseInt(req.params.id);
+        const movieId: number = parseInt(req.params.id);
         const hallSchema = await getHallSchema();
         const ticketPrices = await getTicketPrices();
-        // const takenSeats = await getTakenSeats(movieId);
         const showTimeSlots = await getShowTimeSlots(movieId);
         const resp: MovieScheduleResponse = {
             hall_schema: hallSchema,
@@ -247,10 +271,13 @@ movieRouter.get('/:id/schedule', async (req, res) => {
 });
 
 // api/movie/:id/taken_seats?show_id=
-movieRouter.get('/:id/taken_seats', async (req, res) => {
+movieRouter.get('/:id/taken_seats', async (
+    req: Request<MovieRouterParams, {}, {}, GetShowTakenSeatsQueryParams>,
+    res: Response<ShowTakenSeats | ErrorResponse>,
+) => {
     try {
         const movieId = parseInt(req.params.id);
-        const queryParams: GetShowTakenSeatsQueryParams = req.query;
+        const queryParams = req.query;
         const takenSeats = await getTakenSeats(`${ movieId }_${ queryParams.show_id }`);
         const resp: ShowTakenSeats = {
             taken_seats: takenSeats,

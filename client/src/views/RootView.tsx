@@ -57,7 +57,7 @@ export default function RootView(): JSX.Element {
                 if (result && result == 'true') {
                     navigate(APP_ROUTES.MOVIES_LIST_ROUTE);
                 } else {
-                    navigate(APP_ROUTES.TICKETS_ROUTE);
+                    navigate(APP_ROUTES.TOUR_ROUTE);
                 }
             });
 

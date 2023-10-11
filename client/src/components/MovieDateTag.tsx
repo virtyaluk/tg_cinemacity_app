@@ -5,19 +5,19 @@
 
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { MovieDetailsResponse } from '../../../shared';
 import { DAYS_IN_CINEMA_SINCE_RELEASE } from '../consts';
+import { MovieDetailsResponse, MovieListItem } from '../../../shared';
 
 interface MovieDateTagParams {
-    movieDetails: MovieDetailsResponse;
+    movieDetails?: MovieDetailsResponse | MovieListItem;
 }
 
 const MovieDateTag = ({ movieDetails }: MovieDateTagParams) => {
     const { t } = useTranslation(),
         localeOptions: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' },
-        daysDiff: number = (Date.now() - Date.parse(movieDetails.release_date)) / 1000 / 60 / 60 / 24,
+        daysDiff: number = (Date.now() - Date.parse(movieDetails?.release_date ?? '0')) / 1000 / 60 / 60 / 24,
         titlePrefix: string = daysDiff < 0 ? 'movie_details.watch_from' : 'movie_details.in_cinema_til',
-        dateParsed: Date = new Date(Date.parse(movieDetails.release_date)),
+        dateParsed: Date = new Date(Date.parse(movieDetails?.release_date ?? '0')),
         showtimeEndDate: Date = new Date(dateParsed);
 
     showtimeEndDate.setDate(showtimeEndDate.getDate() + DAYS_IN_CINEMA_SINCE_RELEASE);

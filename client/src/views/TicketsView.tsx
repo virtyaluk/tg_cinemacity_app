@@ -8,6 +8,7 @@ import { useLocation } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Carousel } from 'react-bootstrap';
+import ReactPullToRefresh from 'react-pull-to-refresh';
 import app from '../services/AppController';
 import { getMyTickets } from '../api';
 import { ErrorIcon, TicketView } from '../components';
@@ -17,22 +18,32 @@ import { timeout } from '../utils';
 import { Ticket } from '../../../shared';
 import './TicketsView.scss';
 
+const LOAD_TICKETS_ANIMATION_DELAY_MS: number = 1000;
+
 export default function TicketsView(): JSX.Element {
     const { t } = useTranslation();
     const [tickets, setTickets] = useState<Ticket[]>([]);
     const [appError, setAppError] = useState<boolean>(false);
     const location = useLocation();
+    const fetchData = async (makeBrr: boolean = true) => {
+        Promise.all([getMyTickets(app.getUserId()), timeout(LOAD_TICKETS_ANIMATION_DELAY_MS)])
+            .then(([tr]) => {
+                setTickets(tr.tickets);
+                setAppError(false);
+            })
+            .catch(err => {
+                setAppError(true);
+                console.error('an error occurred while fetching the tickets', err);
+            });
+
+        if (makeBrr) {
+            app.brr.impact('light');
+        }
+    };
 
     useEffect(() => {
         if (!location.state?.tickets?.length) {
-            Promise.all([getMyTickets(app.getUserId()), timeout(1000)])
-                .then(([tr]) => {
-                    setTickets(tr.tickets);
-                })
-                .catch(err => {
-                    setAppError(true);
-                    console.error('an error occurred while fetching the tickets', err);
-                });
+            fetchData(false).then();
         } else {
             setTickets(location.state?.tickets ?? []);
         }
@@ -48,7 +59,7 @@ export default function TicketsView(): JSX.Element {
     }, []);
 
     return (
-        <>
+        <ReactPullToRefresh onRefresh={ fetchData } resistance={ 7 }>
             <HelmetProvider>
                 <Helmet>
                     <title>{ `${ t('my_tickets.page_title') } | ${ APP_NAME }` }</title>
@@ -66,6 +77,6 @@ export default function TicketsView(): JSX.Element {
                     </Carousel.Item>
                 }
             </Carousel>
-        </>
+        </ReactPullToRefresh>
     );
 }

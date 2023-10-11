@@ -20,6 +20,8 @@ import VIPChairIcon from './VIPChairIcon';
 import HallSchema from './HallSchema';
 import DatePicker from './DatePicker';
 import TimePicker from './TimePicker';
+import MoviePosterLabel from './MoviePosterLabel';
+import MovieCell from './MovieCell';
 
 export {
     PictureChip,
@@ -39,4 +41,6 @@ export {
     HallSchema,
     DatePicker,
     TimePicker,
+    MoviePosterLabel,
+    MovieCell,
 };
