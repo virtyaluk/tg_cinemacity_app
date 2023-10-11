@@ -8,7 +8,6 @@ import { useParams } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Col, Container, Row } from 'react-bootstrap';
-import ReactPullToRefresh from 'react-pull-to-refresh';
 import autoAnimate from '@formkit/auto-animate';
 import { getMovieSchedule, getTakenSeats, createInvoice } from '../api';
 import { useSet } from '../hooks/useset';
@@ -44,22 +43,6 @@ export default function MovieBookingView() {
     const takenSeats = useSet<TakenSeatKey>([]);
     const parent1 = useRef(null);
     const parent2 = useRef(null);
-    const fetchData = async (makeBrr: boolean = true) => {
-        getMovieSchedule(movieId ?? '0')
-            .then(msr => {
-                setMovieSchedule(msr);
-                updateAvailableDateSlots();
-                setAppError(false);
-            })
-            .catch(err => {
-                setAppError(true);
-                console.error('an error occurred while loading now playing movies', err);
-            });
-
-        if (makeBrr) {
-            app.brr.impact('light');
-        }
-    };
     const onMainBtnClickHandler = () => {
         console.log('process to booking', selectedTime, selectedDate, selectedSeats.size);
 
@@ -136,7 +119,17 @@ export default function MovieBookingView() {
 
     // Used to fetch current hall schema, prices and time slots.
     useEffect(() => {
-        fetchData(false).then();
+        getMovieSchedule(movieId ?? '0')
+            .then(msr => {
+                setMovieSchedule(msr);
+                updateAvailableDateSlots();
+                setAppError(false);
+            })
+            .catch(err => {
+                setAppError(true);
+                app.brr.notification('error');
+                console.error('an error occurred while loading now playing movies', err);
+            });
     }, []);
 
     useEffect(() => {
@@ -172,6 +165,7 @@ export default function MovieBookingView() {
             })
             .catch(err => {
                 setAppError(true);
+                app.brr.notification('error');
                 console.error('an error occurred while fetching taken seats', err);
             });
     }, [selectedTime]);
@@ -200,7 +194,7 @@ export default function MovieBookingView() {
     }, [selectedSeats.size, selectedDate, selectedTime]);
 
     return (
-        <ReactPullToRefresh onRefresh={ fetchData } resistance={ 7 }>
+        <>
             <HelmetProvider>
                 <Helmet>
                     <title>{ `${ t('booking.page_title') } | ${ APP_NAME }` }</title>
@@ -292,6 +286,6 @@ export default function MovieBookingView() {
                     </Col>
                 </Row>
             </Container>
-        </ReactPullToRefresh>
+        </>
     );
 }

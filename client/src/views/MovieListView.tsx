@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Container, Row, Col, ToggleButton } from 'react-bootstrap';
-import ReactPullToRefresh from 'react-pull-to-refresh';
 import autoAnimate from '@formkit/auto-animate';
 import { MovieContext, MovieContextValue } from '../context/MovieContext';
 import app from '../services/AppController';
@@ -46,6 +45,7 @@ export default function MovieListView(): JSX.Element {
         }
     };
     const onMainBtnClickHandler = () => {
+        app.brr.impact('light');
         navigate(APP_ROUTES.TICKETS_ROUTE, {
             state: {
                 tickets,
@@ -53,7 +53,7 @@ export default function MovieListView(): JSX.Element {
         });
     };
 
-    const fetchData = async (makeBrr: boolean = true) => {
+    useEffect(() => {
         Promise.all([getNowPlayingMovies(), timeout(LOAD_MOVIE_CELLS_ANIMATION_DELAY_MS)])
             .then(([nowPlayingMoviesResp]) => {
                 nowPlayingMoviesResp.movies.sort(moviesSortFn);
@@ -68,10 +68,11 @@ export default function MovieListView(): JSX.Element {
             })
             .catch(err => {
                 setAppError(true);
+                app.brr.notification('error')
                 console.error('an error occurred while loading now playing movies', err);
             });
 
-        await Promise.all([getUpcomingMovies(), timeout(LOAD_MOVIE_CELLS_ANIMATION_DELAY_MS)])
+        Promise.all([getUpcomingMovies(), timeout(LOAD_MOVIE_CELLS_ANIMATION_DELAY_MS)])
             .then(([upcomingMoviesResp]) => {
                 upcomingMoviesResp.movies.sort(moviesSortReverseFn);
                 setUpcomingMovies(upcomingMoviesResp.movies);
@@ -83,6 +84,7 @@ export default function MovieListView(): JSX.Element {
             })
             .catch(err => {
                 setAppError(true);
+                app.brr.notification('error')
                 console.error('an error occurred while loading upcoming movies', err);
             });
 
@@ -93,14 +95,6 @@ export default function MovieListView(): JSX.Element {
             .catch(err => {
                 console.error('an error occurred while fetching the tickets', err);
             });
-
-        if (makeBrr) {
-            app.brr.impact('light');
-        }
-    };
-
-    useEffect(() => {
-        fetchData(false).then();
     }, []);
 
     useEffect(() => {
@@ -123,7 +117,7 @@ export default function MovieListView(): JSX.Element {
     }, [parent1, parent2]);
 
     return (
-        <ReactPullToRefresh onRefresh={ fetchData } resistance={ 7 }>
+        <>
             <HelmetProvider>
                 <Helmet>
                     <title>{ `${ t('movies.page_title') } | ${ APP_NAME }` }</title>
@@ -195,6 +189,6 @@ export default function MovieListView(): JSX.Element {
                     }
                 </div>
             </Container>
-        </ReactPullToRefresh>
+        </>
     );
 }

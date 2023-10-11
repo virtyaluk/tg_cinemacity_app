@@ -37,6 +37,7 @@ export default function AppTourView(): JSX.Element {
                 app.storage
                     .setItem(APP_TOUR_FINISHED_KEY, 'true')
                     .then(() => {
+                        app.brr.impact('light');
                         navigate('/movies');
                     });
                 break;

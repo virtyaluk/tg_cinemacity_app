@@ -9,7 +9,6 @@ import { useTranslation } from 'react-i18next';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import { Container, Row, Col } from 'react-bootstrap';
 import autoAnimate from '@formkit/auto-animate';
-import ReactPullToRefresh from 'react-pull-to-refresh';
 import { getMovieDetails, getMovieCredits } from '../api';
 import { ErrorIcon, MovieInfoSection1, MovieInfoSection2, MovieDateTag } from '../components';
 import {
@@ -45,9 +44,11 @@ export default function MovieDetailsView() {
     const posterSize: string = getPoster(movieConfig.images.backdrop_sizes, 1),
         imgUrlPrefix: string = `${ movieConfig.images.secure_base_url }${ posterSize }`;
     const onMainBtnClickHandler = () => {
+        app.brr.impact('light');
         navigate(APP_ROUTES.MOVIE_BOOKING);
     };
-    const fetchData = async(makeBrr: boolean = true) => {
+
+    useEffect(() => {
         // Load movie details.
         getMovieDetails(movieId ?? '', 'en', 'en', 0, 0, 0)
             .then(movieDetailsResp => {
@@ -56,27 +57,21 @@ export default function MovieDetailsView() {
             })
             .catch(err => {
                 setAppError(true);
+                app.brr.notification('error');
                 console.error('an error occurred while loading movie details', err);
             });
 
         // Load movie cast.
-        await getMovieCredits(movieId ?? '', 'en-US', 10)
+        getMovieCredits(movieId ?? '', 'en-US', 10)
             .then(movieCastResp => {
                 setMovieCast(movieCastResp.cast);
                 setAppError(false);
             })
             .catch(err => {
                 setAppError(true);
+                app.brr.notification('error');
                 console.error('an error occurred while loading movie cast', err);
             });
-
-        if (makeBrr) {
-            app.brr.impact('light');
-        }
-    };
-
-    useEffect(() => {
-        fetchData(false).then();
     }, []);
 
     useEffect(() => {
@@ -120,7 +115,7 @@ export default function MovieDetailsView() {
     }, [parent1, parent2, parent3]);
 
     return (
-        <ReactPullToRefresh onRefresh={ fetchData } resistance={ 7 }>
+        <>
             <HelmetProvider>
                 <Helmet>
                     <title>{ `${ movieDetails?.title } | ${ APP_NAME }` }</title>
@@ -159,6 +154,6 @@ export default function MovieDetailsView() {
                     <MovieInfoSection2Placeholder />
                 }
             </div>
-        </ReactPullToRefresh>
+        </>
     );
 }
