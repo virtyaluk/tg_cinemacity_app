@@ -44,8 +44,6 @@ export default function MovieBookingView() {
     const parent1 = useRef(null);
     const parent2 = useRef(null);
     const onMainBtnClickHandler = () => {
-        console.log('process to booking', selectedTime, selectedDate, selectedSeats.size);
-
         if (!selectedDate || selectedTime.hour == -1 || !selectedSeats.size) {
             return;
         }
@@ -172,8 +170,6 @@ export default function MovieBookingView() {
     }, [selectedTime]);
 
     useEffect(() => {
-        console.info('selected seats, date, time updated', selectedSeats.size);
-
         let totalPrice = 0;
 
         selectedSeats.forEach(({ row, num }) => {
@@ -188,9 +184,11 @@ export default function MovieBookingView() {
                 amount: totalPrice / 100,
             }))
             .on(onMainBtnClickHandler);
+        app.closingConfirmation(totalPrice > 0 && selectedTime.minute != -1);
 
         return () => {
             app.mainButton.off(onMainBtnClickHandler);
+            app.disableClosingConfirmation();
         };
     }, [selectedSeats.size, selectedDate, selectedTime]);
 

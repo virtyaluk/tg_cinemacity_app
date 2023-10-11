@@ -5,6 +5,7 @@
 
 import localforage from 'localforage';
 import * as cloudStorage from './TgCloudStorage';
+import { APP_MAIN_BTN_COLOR, APP_MAIN_BTN_DISABLED_COLOR } from '../consts';
 import { Telegram, WebApp, WebApp as WebAppTypes } from '../../../shared';
 
 type Nullable<T> = T | null | undefined;
@@ -40,8 +41,6 @@ class AppMainButton {
     }
 
     public on(handler: VoidFunction): AppMainButton {
-        console.debug('AppMainButton::on');
-
         this.tgMainBtn.onClick(handler);
         this.onClickFn = handler;
 
@@ -56,16 +55,12 @@ class AppMainButton {
     };
 
     public setText(text: string): AppMainButton {
-        console.debug('AppMainButton::setText', text);
-
         this.tgMainBtn.setText(text);
 
         return this;
     }
 
     public setVisibility(isVisible: boolean): AppMainButton {
-        console.debug('AppMainButton::setVisibility', isVisible);
-
         if (isVisible) {
             this.show();
         } else {
@@ -76,8 +71,6 @@ class AppMainButton {
     }
 
     public setDisability(isDisabled: boolean): AppMainButton {
-        console.debug('AppMainButton::setDisability', isDisabled);
-
         if (isDisabled) {
             this.disable();
         } else {
@@ -100,12 +93,14 @@ class AppMainButton {
     }
 
     public disable(): AppMainButton {
-        this.tgMainBtn.disable;
+        this.setParams({ color: APP_MAIN_BTN_DISABLED_COLOR });
+        this.tgMainBtn.disable();
 
         return this;
     }
 
     public enable(): AppMainButton {
+        this.setParams({ color: APP_MAIN_BTN_COLOR });
         this.tgMainBtn.enable();
 
         return this;
@@ -150,8 +145,6 @@ class AppBackButton {
     }
 
     public on(handler: VoidFunction): AppBackButton {
-        console.debug('AppBackButton::on');
-
         if (this.isSupported) {
             this.tgBackBtn.onClick(handler);
         }
@@ -314,13 +307,21 @@ class AppController {
         return this;
     }
 
+    public closingConfirmation(enable: boolean): AppController {
+        if (enable) {
+            this.enableClosingConfirmation();
+        } else {
+            this.disableClosingConfirmation();
+        }
+
+        return this;
+    }
+
     public getUserId(): number {
         return this.tg.initDataUnsafe?.user?.id ?? DEFAULT_USED_ID;
     }
 
     public openInvoice(url: string): Promise<InvoiceStatus> {
-        console.debug('AppController::openInvoice', url);
-
         return new Promise((resolve) => {
             this.tg.openInvoice(url, (status: InvoiceStatus) => {
                 resolve(status);

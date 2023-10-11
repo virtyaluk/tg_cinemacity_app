@@ -32,6 +32,7 @@ export const APP_ROUTES = {
 
 export const APP_MAIN_BTN_TEXT_COLOR: Color = '#000000';
 export const APP_MAIN_BTN_COLOR: Color = '#FFB800';
+export const APP_MAIN_BTN_DISABLED_COLOR: Color = '#996E00';
 
 export const INIT_MOVIE_CONFIG: ConfigResponse = {
     images: {
