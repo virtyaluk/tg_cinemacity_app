@@ -24,6 +24,7 @@ export default function RootView(): JSX.Element {
     const navigate = useNavigate();
     const onBackBtnClickHandler = () => {
         history.back();
+        app.brr.impact('light');
     };
 
     useEffect(() => {
@@ -79,12 +80,14 @@ export default function RootView(): JSX.Element {
     }, []);
 
     return (
-        <MovieContext.Provider value={ { movieConfig } }>
-            <AnimatePresence>
-                <Outlet />
-            </AnimatePresence>
+        <div data-bs-theme="light">
+            <MovieContext.Provider value={ { movieConfig } }>
+                <AnimatePresence>
+                    <Outlet />
+                </AnimatePresence>
 
-            <ScrollRestoration />
-        </MovieContext.Provider>
+                <ScrollRestoration />
+            </MovieContext.Provider>
+        </div>
     );
 }

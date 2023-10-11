@@ -16,7 +16,9 @@
     }
 
     label.btn {
-        background-color: $secondary-color;
+        //background-color: $secondary-color;
+        background-color: var(--tg-theme-button-color);
+        color: var(--tg-theme-button-text-color);
 
         outline: none;
         float: left;
@@ -35,7 +37,7 @@
     input.btn-check:hover + label.btn,
     input.btn-check:active + label.btn {
         background-color: $gold-color;
-        color: black;
+        color: black !important;
     }
 
     input.btn-check:checked + label.btn {

@@ -64,6 +64,7 @@ label.btn {
 
     & + span {
         font-size: 0.9rem;
+        color: var(--tg-theme-text-color);
     }
 
     &.seat-tick-avail {

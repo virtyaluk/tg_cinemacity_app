@@ -19,7 +19,7 @@ const MovieInfoSection1 = ({ movieDetails }: MovieInfoSection1Props) => {
         <>
             <Row>
                 <Col xs="12">
-                    <h3 className="lh-sm mb-0">
+                    <h3 className="lh-sm mb-0 text-light">
                         { movieDetails.title }
                         {
                             movieDetails.imdb_info.content_rating &&
@@ -30,7 +30,7 @@ const MovieInfoSection1 = ({ movieDetails }: MovieInfoSection1Props) => {
             </Row>
             <Row>
                 <Col xs="12">
-                    <p className="mb-0 lh-1 fs-6">
+                    <p className="mb-0 lh-1 fs-6 text-light">
                         <span>{ movieDetails.genres.slice(0, 3).map(g => t(g)).join(', ') }</span>
                         <span>&nbsp;·&nbsp;</span>
                         <span>{ runtimeStr }</span>

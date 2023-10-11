@@ -20,13 +20,13 @@ import {
     AppErrorView,
     TicketsView,
 } from './views';
-import appController from './services/AppController';
+import app from './services/AppController';
 import './i18n';
 import './index.scss';
 
-appController
-    .setBackgroundColor('#dad7cd')
-    .setHeaderColor('#dad7cd');
+// app
+//     .setBackgroundColor('#dad7cd')
+//     .setHeaderColor('#dad7cd');
 
 const router = createBrowserRouter(createRoutesFromElements(
     <Route element={ <RootView /> } errorElement={ <AppErrorView /> } path="/">

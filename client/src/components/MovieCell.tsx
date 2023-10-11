@@ -6,6 +6,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import app from '../services/AppController';
 import { MoviePosterLabel, MovieStarRating } from './';
 import { DAYS_SINCE_RELEASE_PREMIERE, DAYS_UNTIL_RELEASE_AVAILABLE } from '../consts';
 import { MovieListItem } from '../../../shared';
@@ -21,10 +22,14 @@ const MovieCell = ({ movie, posterBaseUrl, posterSize }: MovieCellProps): JSX.El
     const daysSinceRelease: number = (Date.now() - Date.parse(movie.release_date)) / 1000 / 60 / 60 / 24,
         isPremiere: boolean = daysSinceRelease > 0 && daysSinceRelease < DAYS_SINCE_RELEASE_PREMIERE,
         isAvailableNow: boolean = daysSinceRelease < 0 && Math.abs(daysSinceRelease) < DAYS_UNTIL_RELEASE_AVAILABLE;
+    const onClickHandler = () => {
+        app.brr.impact('light');
+    };
 
     return (
         <>
-            <Link to={ `${ movie.id }` } state={ { movie } } className="movie-cell text-decoration-none text-body fs-6">
+            <Link to={ `${ movie.id }` } state={ { movie } } onClick={ onClickHandler }
+                  className="movie-cell text-decoration-none text-body fs-6">
                 <div className="rounded overflow-hidden position-relative">
                     <img className="movie-poster w-100"
                          src={ movie.poster_path && `${ posterBaseUrl }${ posterSize }${ movie.poster_path }` || '/assets/no_photo.jpg' }

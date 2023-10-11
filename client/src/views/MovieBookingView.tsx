@@ -79,6 +79,7 @@ export default function MovieBookingView() {
                     .hideProgress();
 
                 if (status === 'paid' || status === 'pending') {
+                    app.brr.notification('success');
                     app.close();
                 }
             })
